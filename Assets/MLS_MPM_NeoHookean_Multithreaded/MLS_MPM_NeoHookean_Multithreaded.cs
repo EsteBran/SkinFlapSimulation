@@ -479,7 +479,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                         force = math.float2(0.0f, 1.0f) * 0.5f * norm_factor;
                     }
 
-                    // float xForce;
+                    // float xForce ; // check
                     // float yForce;
                     // if (dist_x != 0) {
                     //     xForce = 0.005f/dist_x; 
