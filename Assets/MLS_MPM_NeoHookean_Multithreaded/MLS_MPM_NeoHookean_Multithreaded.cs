@@ -224,7 +224,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             var mp = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
             mouse_pos = math.float2(mp.x * grid_res, mp.y * grid_res);
-
+            //Cursor.visible = true;
 
             //Debug.Log(mouse_pos.x + " " + mouse_pos.y);
         }
@@ -453,6 +453,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             
             // mouse interaction
             if (mouse_down) {
+                
+                //Distance between particle and mouse
                 var dist = p.x - mouse_pos;
 
                 var dist_x = dist.x;
@@ -463,7 +465,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                
                 if (math.abs(dist_x) < bound_x || math.abs(dist_y) < bound_y) {
                     float norm_factor =  1; //(math.length(dist) / mouse_radius);
-                    norm_factor = math.pow(math.sqrt(norm_factor), 2);
+                    norm_factor = math.pow(math.sqrt(norm_factor), 2); // <-- whats the point of this line? Square rooting then immediately squaring it again
 
                     float2 force = new float2(0.0f, 0.0f);
 
@@ -476,6 +478,34 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                     } else if (dist_y > 0.0f && dist_y < bound_y) {
                         force = math.float2(0.0f, 1.0f) * 0.5f * norm_factor;
                     }
+
+                    // float xForce;
+                    // float yForce;
+                    // if (dist_x != 0) {
+                    //     xForce = 0.005f/dist_x; 
+                    // } 
+                    // else {
+                    //     xForce = 0.1f;
+                    // }
+
+                    // if (dist_y != 0) {
+                    //     yForce = 0.005f/dist_y; 
+                    // } 
+                    // else {
+                    //     yForce = 0.1f;
+                    // }
+                    // if (xForce > 0) {
+                    //     xForce = math.max(0, math.abs(xForce));
+                    // } else {
+                    //     xForce = -math.max(0, math.abs(xForce));
+                    // }
+                    //  if (yForce > 0) {
+                    //     yForce = math.max(0, math.abs(yForce));
+                    // } else {
+                    //     yForce = -math.max(0, math.abs(yForce));
+                    // }
+                    
+                    // float2 force1 = new float2(yForce, xForce);
 
                     //Debug.Log(dist_x + " " + dist_y);
                     
