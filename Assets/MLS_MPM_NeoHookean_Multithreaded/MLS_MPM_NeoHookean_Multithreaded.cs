@@ -3,6 +3,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Burst;
 using UnityEngine;
+
 using UnityEngine.Jobs;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -19,8 +20,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         public float mass;
         public float volume_0; // initial volume
 
-        // public float elastic_lambda;
-        // public float elastic_mu;
+        public float elastic_lambda;
+        public float elastic_mu;
     }
 
     struct Cell {
@@ -113,8 +114,11 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.C = 0;
             p.mass = 1.0f;
 
-            // p.elastic_lambda = lambda;
-            // p.elastic_mu = mu;
+            if (i >= ( num_particles / 2)) {p.elastic_lambda = 100.0f;}
+            else {p.elastic_lambda = lambda;}
+            
+            
+            p.elastic_mu = mu;
 
             ps[i] = p;
 
@@ -224,7 +228,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             var mp = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
             mouse_pos = math.float2(mp.x * grid_res, mp.y * grid_res);
-            //Cursor.visible = true;
+
 
             //Debug.Log(mouse_pos.x + " " + mouse_pos.y);
         }
@@ -309,8 +313,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 var F_minus_F_inv_T = F - F_inv_T;
 
                 // MPM course equation 48
-                var P_term_0 = mu * (F_minus_F_inv_T);
-                var P_term_1 = lambda * math.log(J) * F_inv_T;
+                var P_term_0 = p.elastic_mu * (F_minus_F_inv_T);
+                var P_term_1 = p.elastic_lambda * math.log(J) * F_inv_T;
                 var P = P_term_0 + P_term_1;
 
                 // cauchy_stress = (1 / det(F)) * P * F_T
@@ -388,8 +392,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 // 'slip' boundary conditions
                 int x = i / grid_res;
                 int y = i % grid_res;
-                if (x < 17 || x > grid_res - 19) { cell.v.x = 0; }
-                if (y < 17 || y > grid_res - 19) { cell.v.y = 0; }
+                if (x < 3 || x > grid_res - 3) { cell.v.x = 0; }
+                if (y < 3 || y > grid_res - 3) { cell.v.y = 0; }
 
                 grid[i] = cell;
             }
@@ -453,8 +457,6 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             
             // mouse interaction
             if (mouse_down) {
-                
-                //Distance between particle and mouse
                 var dist = p.x - mouse_pos;
 
                 var dist_x = dist.x;
@@ -463,55 +465,43 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 var bound_x = 0.2f;
                 var bound_y = 1.0f;
                
-                if (math.abs(dist_x) < bound_x || math.abs(dist_y) < bound_y) {
-                    float norm_factor =  1; //(math.length(dist) / mouse_radius);
-                    norm_factor = math.pow(math.sqrt(norm_factor), 2); // <-- whats the point of this line? Square rooting then immediately squaring it again
+                // if (math.abs(dist_x) < bound_x || math.abs(dist_y) < bound_y) {
+                //     float norm_factor =  1; //(math.length(dist) / mouse_radius);
+                //     norm_factor = math.pow(math.sqrt(norm_factor), 2);
 
-                    float2 force = new float2(0.0f, 0.0f);
+                //     float2 force = new float2(0.0f, 0.0f);
 
-                    if (dist_x < 0.0f && dist_x > -bound_x) {
-                        force = math.float2(-1.0f, 0.0f) * 0.5f * norm_factor;
-                    } else if (dist_x > 0.0f && dist_x < bound_x) {
-                        force = math.float2(1.0f, 0.0f) * 0.5f * norm_factor;
-                    } else if (dist_y < 0.0f && dist_y > -bound_y) {
-                        force = math.float2(0.0f, -1.0f) * 0.5f * norm_factor;
-                    } else if (dist_y > 0.0f && dist_y < bound_y) {
-                        force = math.float2(0.0f, 1.0f) * 0.5f * norm_factor;
-                    }
+                //     if (dist_x < 0.0f && dist_x > -bound_x) {
+                //         force = math.float2(-1.0f, 0.0f) * 0.5f * norm_factor;
+                //     } else if (dist_x > 0.0f && dist_x < bound_x) {
+                //         force = math.float2(1.0f, 0.0f) * 0.5f * norm_factor;
+                //     } else if (dist_y < 0.0f && dist_y > -bound_y) {
+                //         force = math.float2(0.0f, -1.0f) * 0.5f * norm_factor;
+                //     } else if (dist_y > 0.0f && dist_y < bound_y) {
+                //         force = math.float2(0.0f, 1.0f) * 0.5f * norm_factor;
+                //     }
 
-                    // float xForce ; // check
-                    // float yForce;
-                    // if (dist_x != 0) {
-                    //     xForce = 0.005f/dist_x; 
-                    // } 
-                    // else {
-                    //     xForce = 0.1f;
-                    // }
-
-                    // if (dist_y != 0) {
-                    //     yForce = 0.005f/dist_y; 
-                    // } 
-                    // else {
-                    //     yForce = 0.1f;
-                    // }
-                    // if (xForce > 0) {
-                    //     xForce = math.max(0, math.abs(xForce));
-                    // } else {
-                    //     xForce = -math.max(0, math.abs(xForce));
-                    // }
-                    //  if (yForce > 0) {
-                    //     yForce = math.max(0, math.abs(yForce));
-                    // } else {
-                    //     yForce = -math.max(0, math.abs(yForce));
-                    // }
+                //     //Debug.Log(dist_x + " " + dist_y);
                     
-                    // float2 force1 = new float2(yForce, xForce);
+                //     p.v += force*2;
+                // }
 
-                    //Debug.Log(dist_x + " " + dist_y);
-                    
-                    p.v += force*2;
+                if (math.dot(dist, dist) < 0.5f) {
+                    var force = math.normalize(dist) * 2;
+                    p.v = force * 2;
                 }
-               
+
+                if (math.dot(dist, dist) < 0.2f) {
+    
+                    
+                    //p.x = math.float2(100.0f, 50.0f + UnityEngine.Random.Range(0.0f, 100.0f));
+                    p.mass = 0.0f;
+                    p.v = 0.0f;
+                    p.elastic_mu = 0.0f;
+                    p.elastic_lambda = 0.0f;
+                    p.C = math.float2x2 (0,0,
+                                         0,0);
+                }
 
             }
 

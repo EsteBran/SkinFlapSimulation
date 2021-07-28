@@ -9,7 +9,7 @@ public class SimRenderer : MonoBehaviour {
     // Compute buffers used for indirect mesh drawing
     ComputeBuffer point_buffer;
     ComputeBuffer args_buffer;
-    uint[] args = new uint[5] { 0, 0, 0, 0, 0};
+    uint[] args = new uint[7] { 0, 0, 0, 0, 0, 0, 0};
     
     Bounds bounds;
 
@@ -23,6 +23,9 @@ public class SimRenderer : MonoBehaviour {
         // indirect arguments for mesh instances
         args_buffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
         uint numIndices = (uint)instance_mesh.GetIndexCount(0);
+        
+        Debug.Log(numIndices);
+
         args[0] = numIndices;
         args[1] = (uint)point_buffer.count;
         args_buffer.SetData(args);
