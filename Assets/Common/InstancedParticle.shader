@@ -3,6 +3,7 @@
         _Colour ("Colour", COLOR) = (1, 1, 1, 1)
         _Colour1 ("Colour2", COLOR) = (0.5, 0.5, 0.5, 0.5)
         _Colour2 ("Colour2", COLOR) = (0,0,0,0)
+        _Force ("Force", COLOR) = (1, 0, 1, 1)
         _Size ("Size", float) = 0.035
     }
 
@@ -32,6 +33,8 @@
 
                 float elastic_lambda;
                 float elastic_mu;
+
+                float aForce;
             };
 
             struct v2f {
@@ -43,6 +46,7 @@
             fixed4 _Colour;
             fixed4 _Colour1;
             fixed4 _Colour2;
+            fixed4 _Force;
 
             StructuredBuffer<Particle> particle_buffer;
 
@@ -62,11 +66,21 @@
 
                 //assign color based on lambda
                 if (particle_buffer[instanceID].elastic_lambda > 10.0f) {
-                    o.color = _Colour1;
+                    if (particle_buffer[instanceID].aForce > 0) {
+                        o.color = _Force;
+                    }
+                    else {
+                        o.color = _Colour1;
+                    }
                 } else if (particle_buffer[instanceID].elastic_lambda > 0.0f) {
-                    o.color = _Colour; 
+                    if (particle_buffer[instanceID].aForce > 0) {
+                        o.color = _Force;
+                    }
+                    else {
+                        o.color = _Colour;
+                    }
                 } else if (particle_buffer[instanceID].elastic_lambda == 0.0f) {
-                    o.color = _Colour2;
+                   // o.color = _Colour2;
                 }
                 
                 return o;

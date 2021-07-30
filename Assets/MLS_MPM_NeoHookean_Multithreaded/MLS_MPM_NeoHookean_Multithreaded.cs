@@ -22,6 +22,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
         public float elastic_lambda;
         public float elastic_mu;
+
+        public float aForce; 
     }
 
     struct Cell {
@@ -484,11 +486,12 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 //     //Debug.Log(dist_x + " " + dist_y);
                     
                 //     p.v += force*2;
-                // }
-
-                if (math.dot(dist, dist) < 0.5f) {
+                // }       
+                //p.aForce = 0;
+                if (math.dot(dist, dist) < 2.0f) {
                     var force = math.normalize(dist) * 2;
                     p.v = force * 2;
+                    p.aForce = math.sqrt(math.pow(force.x, 2) + math.pow(force.y, 2));
                 }
 
                 if (math.dot(dist, dist) < 0.2f) {
