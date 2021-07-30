@@ -9,7 +9,7 @@
 - [ ] Use shaders to parallelize simulation
 - [ ] Cut with laser and then maybe knife
 - [ ] Figure out global position of particle
-- [ ] Cut objects into smaller objects and have them interact with one another real time 
+- [x] Cut objects into smaller objects and have them interact with one another real time 
 - [ ] Mouse interaction
 
 - [x] Better mouse interaction or cut with laser?
