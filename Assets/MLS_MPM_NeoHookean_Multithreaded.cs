@@ -32,7 +32,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         public float padding; // unused
     }
     
-    const int grid_res = 64;
+    const int grid_res = 32;
     const int num_cells = grid_res * grid_res * grid_res;
 
     // batch size for the job system. just determined experimentally
@@ -58,7 +58,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     int num_particles;
     List<float3> temp_positions;
     
-    //SimRenderer sim_renderer;
+    SimRenderer sim_renderer;
     
     // interaction
     const float mouse_radius = 10.0f;
@@ -102,7 +102,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         // populate our array of particles
 
         temp_positions = new List<float3>();
-        spawn_box(32 , 32 , 32, 32, 32, 32);
+        spawn_box(grid_res / 2 , grid_res / 2 , grid_res / 2, grid_res / 2, grid_res / 2, grid_res / 2);
         
 
         
@@ -191,10 +191,10 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         // ---- end precomputation of particle volumes
 
         // boilerplate rendering code handled elsewhere
-       // sim_renderer = GameObject.FindObjectOfType<SimRenderer>();
-        //sim_renderer.Initialise(num_particles, Marshal.SizeOf(new Particle()));
+       sim_renderer = GameObject.FindObjectOfType<SimRenderer>();
+       sim_renderer.Initialise(num_particles, Marshal.SizeOf(new Particle()));
 
-        //Debug.Log(Marshal.SizeOf(new Particle()));
+       Debug.Log(Marshal.SizeOf(new Particle()));
     }
 
     void initialize_particles(int particle_type) {
@@ -210,7 +210,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             
         }
 
-        //sim_renderer.RenderFrame(ps);
+        sim_renderer.RenderFrame(ps);
     }
 
     void OnGUI() {
@@ -278,7 +278,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     }
 
     #region Jobs
-    //[BurstCompile]
+    [BurstCompile]
     struct Job_ClearGrid : IJobParallelFor {
         public NativeArray<Cell> grid;
 
@@ -355,7 +355,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
                         // scatter mass and momentum to the grid
                         int cell_index = ((int)cell_x.x + ((int)gx - 1)) + grid_res * (((int)cell_x.y + ((int)gy - 1)* grid_res) + grid_res * ((int)cell_x.z + (int)gz - 1));
-                        //if (cell_index < 0) Debug.Log(cell_idx);
+                        //if (cell_index > 32768) Debug.Log(cell_idx);
                         Cell cell = grid[cell_index];
 
                         // MPM course, equation 172
@@ -405,6 +405,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 int y = i % grid_res;
                 if (x < 3 || x > grid_res - 3) { cell.v.x = 0; }
                 if (y < 3 || y > grid_res - 3) { cell.v.y = 0; }
+                
 
                 grid[i] = cell;
             }
@@ -445,11 +446,13 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                     for (uint gz = 0; gz < 3; ++gz) {
                     float weight = weights[gx].x * weights[gy].y * weights[gz].z;
 
-                    uint3 cell_x = math.uint3(cell_idx.x + gx - 1, cell_idx.y + gy - 1, 1);
+                    uint3 cell_x = math.uint3(cell_idx.x + gx - 1, cell_idx.y + gy - 1, cell_idx.z + gz - 1);
                     int cell_index = ((int)cell_x.x + ((int)gx - 1)) + grid_res * (((int)cell_x.y + ((int)gy - 1)* grid_res) + grid_res * ((int)cell_x.z + (int)gz - 1));
                     
+
                     float3 dist = (cell_x - p.x) + 0.5f;
                     float3 weighted_velocity = grid[cell_index].v * weight;
+
 
                     // APIC paper equation 10, constructing inner term for B
                     var term = math.float3x3(weighted_velocity * dist.x, weighted_velocity * dist.y, weighted_velocity * dist.z);
@@ -476,8 +479,6 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 var dist_y = dist.y;
                 var dist_z = dist.z;
 
-                var bound_x = 0.2f;
-                var bound_y = 1.0f;
                
                 // if (math.abs(dist_x) < bound_x || math.abs(dist_y) < bound_y) {
                 //     float norm_factor =  1; //(math.length(dist) / mouse_radius);
@@ -507,8 +508,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 }
 
                 if (math.dot(dist, dist) < 0.2f) {
-    
-                    
+
                     //p.x = math.float2(100.0f, 50.0f + UnityEngine.Random.Range(0.0f, 100.0f));
                     p.mass = 0.0f;
                     p.v = 0.0f;
