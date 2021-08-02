@@ -32,7 +32,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         public float padding; // unused
     }
     
-    const int grid_res = 64;
+    const int grid_res = 16;
     const int num_cells = grid_res * grid_res * grid_res;
 
     // batch size for the job system. just determined experimentally
@@ -58,7 +58,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     int num_particles;
     List<float3> temp_positions;
     
-    //SimRenderer sim_renderer;
+    SimRenderer sim_renderer;
     
     // interaction
     const float mouse_radius = 10.0f;
@@ -102,7 +102,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         // populate our array of particles
 
         temp_positions = new List<float3>();
-        spawn_box(32 , 32 , 32, 32, 32, 32);
+        spawn_box(grid_res/2, grid_res/2 , grid_res/2, grid_res/2, grid_res/2, grid_res/2);
         
 
         
@@ -191,8 +191,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         // ---- end precomputation of particle volumes
 
         // boilerplate rendering code handled elsewhere
-       // sim_renderer = GameObject.FindObjectOfType<SimRenderer>();
-        //sim_renderer.Initialise(num_particles, Marshal.SizeOf(new Particle()));
+        sim_renderer = GameObject.FindObjectOfType<SimRenderer>();
+        sim_renderer.Initialise(num_particles, Marshal.SizeOf(new Particle()));
 
         //Debug.Log(Marshal.SizeOf(new Particle()));
     }
@@ -210,7 +210,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             
         }
 
-        //sim_renderer.RenderFrame(ps);
+        sim_renderer.RenderFrame(ps);
     }
 
     void OnGUI() {
@@ -220,7 +220,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
         float width = mouse_radius/grid_res * Screen.width;
         float height = mouse_radius/grid_res * Screen.height;
-
+        GUI.Label(new Rect(25, 25, 200, 30), "Framerate: " + 1/Time.deltaTime);
         
 
         Rect screenRect = new Rect(x_coord - width/2, Screen.height - y_coord - height/2, width, height);
@@ -445,7 +445,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                     for (uint gz = 0; gz < 3; ++gz) {
                     float weight = weights[gx].x * weights[gy].y * weights[gz].z;
 
-                    uint3 cell_x = math.uint3(cell_idx.x + gx - 1, cell_idx.y + gy - 1, 1);
+                    uint3 cell_x = math.uint3(cell_idx.x + gx - 1, cell_idx.y + gy - 1, cell_idx.z + gz - 1);
                     int cell_index = ((int)cell_x.x + ((int)gx - 1)) + grid_res * (((int)cell_x.y + ((int)gy - 1)* grid_res) + grid_res * ((int)cell_x.z + (int)gz - 1));
                     
                     float3 dist = (cell_x - p.x) + 0.5f;
