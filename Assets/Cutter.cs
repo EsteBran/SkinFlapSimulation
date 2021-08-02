@@ -31,7 +31,7 @@ public class Cutter : MonoBehaviour
         depth = Mathf.Clamp(depth, 0.75f, 5f);
         mousePos.z = depth;
         mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        Debug.Log("x:" + mousePos.x.ToString() + " y:" + mousePos.y.ToString() + " z:" + depth);
+        //Debug.Log("x:" + mousePos.x.ToString() + " y:" + mousePos.y.ToString() + " z:" + depth);
         transform.position = mousePos;
         }
     }

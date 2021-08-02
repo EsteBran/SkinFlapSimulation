@@ -11,7 +11,7 @@
         Tags { "Queue"="Overlay+1" }
         ZTest Always
         Pass {
-            Tags { "LightMode"="ForwardBase" "Queue" = "Transparent" "RenderType" = "Transparent" "IgnoreProjector" = "True" }
+            Tags { "LightMode"="ForwardBase" "Queue" = "Transparent" "RenderType" = "Opaque" "IgnoreProjector" = "True" }
             ZWrite Off
             Blend SrcAlpha OneMinusSrcAlpha
 

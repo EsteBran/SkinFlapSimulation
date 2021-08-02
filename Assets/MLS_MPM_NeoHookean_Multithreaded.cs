@@ -32,7 +32,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         public float padding; // unused
     }
     
-    const int grid_res = 16;
+    const int grid_res = 24;
     const int num_cells = grid_res * grid_res * grid_res;
 
     // batch size for the job system. just determined experimentally
@@ -41,7 +41,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     // simulation parameters
     const float dt = 0.1f; // timestep
     const float iterations = (int)(1.0f / dt);
-    const float gravity = -0.0f;
+    const float gravity = -0.5f;
 
     // Lamé parameters for stress-strain relationship
     const float lambda = 10.0f;
@@ -119,9 +119,9 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.C = 0;
             p.mass = 1.0f;
 
-            // if (i >= ( num_particles / 2)) {p.elastic_lambda = 100.0f;}
-            // else {p.elastic_lambda = lambda;}
-            p.elastic_lambda = lambda;
+            if (i >= ( num_particles / 2)) {p.elastic_lambda = 100.0f;}
+            else {p.elastic_lambda = lambda;}
+           // p.elastic_lambda = lambda;
             
             p.elastic_mu = mu;
 
@@ -173,8 +173,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                     for (int gz = 0; gz < 3; ++gz) {
                         float weight = weights[gx].x * weights[gy].y * weights[gz].z;
 
-                        // map 3D to 1D index in grid x + WIDTH * (y + DEPTH * z)
-                        int cell_index = ((int)cell_idx.x + (gx - 1)) + grid_res * (((int)cell_idx.y + (gy - 1)* grid_res) + grid_res * ((int)cell_idx.z + gz - 1));
+                        // map 3D to 1D index in grid x*WIDTH*DEPTH + y*WIDTH + z
+                        int cell_index = ((int)cell_idx.x + (gx - 1))*grid_res*grid_res + ((int)cell_idx.y + (gy - 1)) * grid_res + ((int)cell_idx.z + gz - 1);
                         density += grid[cell_index].mass * weight;
                     }
                     
@@ -354,7 +354,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                         float3 Q = math.mul(p.C, cell_dist);
 
                         // scatter mass and momentum to the grid
-                        int cell_index = ((int)cell_x.x + ((int)gx - 1)) + grid_res * (((int)cell_x.y + ((int)gy - 1)* grid_res) + grid_res * ((int)cell_x.z + (int)gz - 1));
+                         // map 3D to 1D index in grid x*WIDTH*DEPTH + y*WIDTH + z
+                        int cell_index = ((int)cell_x.x + ((int)gx - 1))*grid_res*grid_res + ((int)cell_x.y + ((int)gy - 1))*grid_res + ((int)cell_x.z + (int)gz - 1);
                         //if (cell_index > 32768) Debug.Log(cell_idx);
                         Cell cell = grid[cell_index];
 
@@ -401,10 +402,12 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 cell.v += dt * math.float3(0, gravity, 0);
 
                 // 'slip' boundary conditions
-                int x = i / grid_res;
-                int y = i % grid_res;
+                int x = i / grid_res * grid_res;
+                int y = (i / grid_res) % grid_res;
+                int z = i % grid_res;
                 if (x < 3 || x > grid_res - 3) { cell.v.x = 0; }
                 if (y < 3 || y > grid_res - 3) { cell.v.y = 0; }
+                if (z < 3 || z > grid_res - 3) { cell.v.z = 0; }
                 
 
                 grid[i] = cell;
@@ -447,7 +450,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                     float weight = weights[gx].x * weights[gy].y * weights[gz].z;
 
                     uint3 cell_x = math.uint3(cell_idx.x + gx - 1, cell_idx.y + gy - 1, cell_idx.z + gz - 1);
-                    int cell_index = ((int)cell_x.x + ((int)gx - 1)) + grid_res * (((int)cell_x.y + ((int)gy - 1)* grid_res) + grid_res * ((int)cell_x.z + (int)gz - 1));
+                     // map 3D to 1D index in grid x*WIDTH*DEPTH + y*WIDTH + z
+                    int cell_index = ((int)cell_x.x + ((int)gx - 1))*grid_res*grid_res + ((int)cell_x.y + ((int)gy - 1))*grid_res + ((int)cell_x.z + (int)gz - 1);
                     
 
                     float3 dist = (cell_x - p.x) + 0.5f;
