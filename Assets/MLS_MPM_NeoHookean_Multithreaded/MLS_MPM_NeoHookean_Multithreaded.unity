@@ -219,23 +219,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be7647a5fdd1a10499c68e7c3e334467, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trail: {fileID: 0}
-  cursorColor:
-    r: 0
-    g: 0
-    b: 0
-    a: 0
-  spriteRenderer: {fileID: 0}
-  cut:
-    r: 255
-    g: 0
-    b: 0
-    a: 1
-  nCut:
-    r: 0
-    g: 255
-    b: 0
-    a: 1
 --- !u!96 &229227565
 TrailRenderer:
   serializedVersion: 2
@@ -437,22 +420,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 566509816}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a09053606bb184d46b97d9c251d615ee, type: 3}
+  m_Script: {fileID: 11500000, guid: 41ef38c4db9e0d94baa604cf21649005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instance_mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  instance_material: {fileID: 2100000, guid: 2b7f59ff6590d4b468bf9d853797c756, type: 2}
-  args:
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  bounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
 --- !u!114 &566509821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,29 +432,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 566509816}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e7b057cef68a8e46964aaa27612a684, type: 3}
+  m_Script: {fileID: 11500000, guid: cdf29336c7315824299878876968bd72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weights:
-  - x: 0
-    y: 0
-  - x: 0
-    y: 0
-  - x: 0
-    y: 0
-  num_particles: 0
-  temp_positions: []
-  sim_renderer: {fileID: 0}
-  mouse_down: 0
-  mouse_pos:
-    x: 0
-    y: 0
-  mouse_rect:
-  - x: 0
-    y: 0
-  - x: 0
-    y: 0
-  - x: 0
-    y: 0
-  - x: 0
-    y: 0
+  instance_mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  instance_material: {fileID: 2100000, guid: a132d8220f3b6044b9149d68b0671290, type: 2}

@@ -8,6 +8,8 @@
     }
 
     SubShader {
+        Tags { "Queue"="Overlay+1" }
+        ZTest Always
         Pass {
             Tags { "LightMode"="ForwardBase" "Queue" = "Transparent" "RenderType" = "Transparent" "IgnoreProjector" = "True" }
             ZWrite Off
@@ -64,7 +66,7 @@
                 o.pos = mul(UNITY_MATRIX_VP, float4(worldPosition, 1.0f));
 
 
-                 //assign color based on lambda
+                //assign color based on lambda
                 if (particle_buffer[instanceID].elastic_lambda > 10.0f) {
                     if (particle_buffer[instanceID].aForce > 0) {
                         o.color = _Force;
