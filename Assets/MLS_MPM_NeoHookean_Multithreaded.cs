@@ -402,12 +402,12 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 cell.v += dt * math.float3(0, gravity, 0);
 
                 // 'slip' boundary conditions
-                int x = i / grid_res * grid_res;
+                int x = i / (grid_res * grid_res);
                 int y = (i / grid_res) % grid_res;
                 int z = i % grid_res;
-                if (x < 3 || x > grid_res - 3) { cell.v.x = 0; }
-                if (y < 3 || y > grid_res - 3) { cell.v.y = 0; }
-                if (z < 3 || z > grid_res - 3) { cell.v.z = 0; }
+                if (x < 6 || x > grid_res - 6) { cell.v.x = 0; }
+                if (y < 6 || y > grid_res - 6) { cell.v.y = 0; }
+                if (z < 6 || z > grid_res - 6) { cell.v.z = 0; }
                 
 
                 grid[i] = cell;
