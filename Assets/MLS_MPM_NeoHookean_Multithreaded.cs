@@ -207,7 +207,6 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         for (int i = 0; i < iterations; ++i) {
             Simulate();
 
-            
         }
 
         sim_renderer.RenderFrame(ps);
