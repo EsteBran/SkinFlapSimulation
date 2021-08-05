@@ -11,9 +11,10 @@
         Tags { "Queue"="Overlay+1" }
         ZTest Always
         Pass {
-            Tags { "LightMode"="ForwardBase" "Queue" = "Transparent" "RenderType" = "Opaque" "IgnoreProjector" = "True" }
-            ZWrite Off
-            Blend SrcAlpha OneMinusSrcAlpha
+            Tags { "LightMode"="ForwardBase" "Queue" = "Opaque" "RenderType" = "Opaque" "IgnoreProjector" = "False" }
+            Cull Back
+            ZWrite On
+            //Blend SrcAlpha OneMinusSrcAlpha
 
             CGPROGRAM
 
@@ -42,6 +43,7 @@
             struct v2f {
                 float4 pos : SV_POSITION;
                 fixed4 color : COLOR;
+                half3 worldNormal : TEXCOORD0;
             };
 
             float _Size;
@@ -65,21 +67,26 @@
                 v2f o;
                 o.pos = mul(UNITY_MATRIX_VP, float4(worldPosition, 1.0f));
 
+                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+
+                float lightDot = dot(v.normal, lightDir);
+                lightDot = exp(-pow(2.0f*(1 - lightDot), 1.3f));
+
 
                 //assign color based on lambda
                 if (particle_buffer[instanceID].elastic_lambda > 10.0f) {
                     if (particle_buffer[instanceID].aForce > 0) {
-                        o.color = _Force;
+                        o.color = _Force * lightDot;
                     }
                     else {
-                        o.color = _Colour1;
+                        o.color = _Colour1 * lightDot;
                     }
                 } else if (particle_buffer[instanceID].elastic_lambda > 0.0f) {
                     if (particle_buffer[instanceID].aForce > 0) {
-                        o.color = _Force;
+                        o.color = _Force * lightDot;
                     }
                     else {
-                        o.color = _Colour;
+                        o.color = _Colour * lightDot;
                     }
                 } 
                 
@@ -87,8 +94,12 @@
             }
 
             fixed4 frag (v2f i, uint instanceID : SV_InstanceID) : SV_Target {
+                
+                
                 return i.color;
             }
+
+            
 
             ENDCG
         }
