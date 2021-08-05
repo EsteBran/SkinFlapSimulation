@@ -60,7 +60,7 @@
                 // Scaling vertices by our base size param (configurable in the material) and the mass of the particle
                 float3 localPosition = v.vertex.xyz * (_Size * data.w);
                 float3 worldPosition = data.xyz + localPosition;
-				
+				//print(worldPosition);
                 // project into camera space
                 v2f o;
                 o.pos = mul(UNITY_MATRIX_VP, float4(worldPosition, 1.0f));

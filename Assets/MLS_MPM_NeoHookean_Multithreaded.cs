@@ -41,7 +41,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     // simulation parameters
     const float dt = 0.1f; // timestep
     const float iterations = (int)(1.0f / dt);
-    const float gravity = -0.5f;
+    const float gravity = -1.5f;
 
     // Lamé parameters for stress-strain relationship
     const float lambda = 10.0f;
@@ -119,7 +119,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.C = 0;
             p.mass = 1.0f;
 
-            if (i >= ( num_particles / 2)) {p.elastic_lambda = 100.0f;}
+            if (i >= ( num_particles / 2)) {p.elastic_lambda = 10.0f;}
             else {p.elastic_lambda = lambda;}
            // p.elastic_lambda = lambda;
             
@@ -165,7 +165,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             weights[0] = 0.5f * math.pow(0.5f - cell_diff, 2);
             weights[1] = 0.75f - math.pow(cell_diff, 2);
             weights[2] = 0.5f * math.pow(0.5f + cell_diff, 2);
-
+           // Debug.Log(p.x.xyz);
             float density = 0.0f;
             // iterate over neighbouring 3x3x3 cells
             for (int gx = 0; gx < 3; ++gx) {
@@ -194,7 +194,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         sim_renderer = GameObject.FindObjectOfType<SimRenderer>();
         sim_renderer.Initialise(num_particles, Marshal.SizeOf(new Particle()));
 
-       Debug.Log(Marshal.SizeOf(new Particle()));
+       //Debug.Log(Marshal.SizeOf(new Particle()));
     }
 
     void initialize_particles(int particle_type) {
@@ -355,8 +355,11 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
                         // scatter mass and momentum to the grid
                          // map 3D to 1D index in grid x*WIDTH*DEPTH + y*WIDTH + z
-                        int cell_index = ((int)cell_x.x + ((int)gx - 1))*grid_res*grid_res + ((int)cell_x.y + ((int)gy - 1))*grid_res + ((int)cell_x.z + (int)gz - 1);
+                        int cell_index = ((int)cell_x.x)*grid_res*grid_res + ((int)cell_x.y)*grid_res + ((int)cell_x.z);
                         //if (cell_index > 32768) Debug.Log(cell_idx);
+                        int tPrint = 13824 - cell_index; 
+                        //string pRINT = string.Format("index is {0}", tPrint); 
+                        //Debug.Log(pRINT);
                         Cell cell = grid[cell_index];
 
                         // MPM course, equation 172
@@ -451,7 +454,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
                     uint3 cell_x = math.uint3(cell_idx.x + gx - 1, cell_idx.y + gy - 1, cell_idx.z + gz - 1);
                      // map 3D to 1D index in grid x*WIDTH*DEPTH + y*WIDTH + z
-                    int cell_index = ((int)cell_x.x + ((int)gx - 1))*grid_res*grid_res + ((int)cell_x.y + ((int)gy - 1))*grid_res + ((int)cell_x.z + (int)gz - 1);
+                    int cell_index = ((int)cell_x.x)*grid_res*grid_res + ((int)cell_x.y)*grid_res + ((int)cell_x.z);
                     
 
                     float3 dist = (cell_x - p.x) + 0.5f;
@@ -505,7 +508,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 //     p.v += force*2;
                 // }       
                 //p.aForce = 0;
-                if (math.dot(dist, dist) < 2.0f) {
+                if (math.dot(dist, dist) < 100.0f) {
                     var force = math.normalize(dist) * 2;
                     p.v = force * 2;
                     p.aForce = math.sqrt(math.pow(force.x, 2) + math.pow(force.y, 2));
