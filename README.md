@@ -13,5 +13,7 @@
 - [ ] Mouse interaction
 
 - [x] Better mouse interaction or cut with laser?
+- [ ] Use knife to cut (probably use particles) using predetermined paths?
+- - [ ] Probably need to create a system that simulates multiple objects
 - [x] Try it out in 3D (have an idea of how much work we need to do)
 - [ ] Refactor program into something more modular
