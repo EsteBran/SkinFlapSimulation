@@ -41,7 +41,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     // simulation parameters
     const float dt = 0.1f; // timestep
     const float iterations = (int)(1.0f / dt);
-    const float gravity = -1.5f;
+    const float gravity = -0.5f;
 
     // Lamé parameters for stress-strain relationship
     const float lambda = 10.0f;
@@ -120,7 +120,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.mass = 1.0f;
 
             if (i >= ( num_particles / 2)) {p.elastic_lambda = 10.0f;}
-            else {p.elastic_lambda = lambda;}
+            else {p.elastic_lambda = 100.0f;}
            // p.elastic_lambda = lambda;
             
             p.elastic_mu = mu;
@@ -510,7 +510,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 if (math.dot(dist, dist) < 100.0f) {
                     var force = math.normalize(dist) * 2;
                     p.v = force * 2;
-                    p.aForce = math.sqrt(math.pow(force.x, 2) + math.pow(force.y, 2));
+                    p.aForce = math.sqrt(math.pow(force.x, 2) + math.pow(force.y, 2) + math.pow(force.z, 2));
                 }
 
                 if (math.dot(dist, dist) < 0.2f) {

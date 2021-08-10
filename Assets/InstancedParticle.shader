@@ -8,8 +8,8 @@
     }
 
     SubShader {
-        Tags { "Queue"="Overlay+1" }
-        ZTest Always
+        Tags { "Queue"="Geometry+1" }
+        ZTest LEqual
         Pass {
             Tags { "LightMode"="ForwardBase" "Queue" = "Opaque" "RenderType" = "Opaque" "IgnoreProjector" = "False" }
             Cull Back
@@ -69,8 +69,9 @@
 
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
 
-                float lightDot = dot(v.normal, lightDir);
-                lightDot = exp(-pow(2.0f*(1 - lightDot), 1.3f));
+                float lightDot = clamp(dot(v.normal, lightDir), -1, 1);
+                lightDot = exp(-pow(2.0f*(1 - lightDot), 1.2f));
+                lightDot += ShadeSH9(half4(v.normal, 1));
 
 
                 //assign color based on lambda
