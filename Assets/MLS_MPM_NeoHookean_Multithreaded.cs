@@ -3,6 +3,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Burst;
 using UnityEngine;
+using VoxelSystem;
 
 using UnityEngine.Jobs;
 using UnityEngine.UI;
@@ -71,7 +72,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
     //UI
 
-
+    public Mesh bust;
 
 
 
@@ -88,13 +89,54 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         }
     }
     
+    void meshToVoxel() {
+        List<Voxel_t> voxels;
+        float unit;
+        float3 max = new float3(0,0,0);
+        float3 min = new float3(0,0,0);
+        float scale;
+        CPUVoxelizer.Voxelize(bust, 24, out voxels, out unit);
+        for (int v = 0; v < voxels.Count; v++) {
+            if (v == 0) {
+            min.x = max.x = voxels[v].position.x;
+            min.y = max.y = voxels[v].position.y;
+            min.z = max.z = voxels[v].position.z;
+            }
+            else  {
+                if (voxels[v].position.x > max.x) max.x = voxels[v].position.x;
+                if (voxels[v].position.y > max.y) max.y = voxels[v].position.y;
+                if (voxels[v].position.z > max.z) max.z = voxels[v].position.z;
+                
+                if (voxels[v].position.x < max.x) max.x = voxels[v].position.x;
+                if (voxels[v].position.y < max.x) max.y = voxels[v].position.y;
+                if (voxels[v].position.z < max.x) max.z = voxels[v].position.z;
+
+            }
+
+        }
+        scale = math.min(max.x-min.x, max.y-min.y);
+        scale = math.min(scale, max.z-min.z);
+        float minimum;
+        if (scale == max.x-min.x) minimum = min.x;
+        else if (scale == max.y-min.y) minimum = min.y;
+        else minimum = min.z;
+
+        for (int v = 0; v < voxels.Count; v++) {
+            var pos = math.float3((voxels[v].position.x - minimum)/scale, (voxels[v].position.y - minimum)/scale, (voxels[v].position.z - minimum)/scale);
+            temp_positions.Add(pos);
+
+        }
+
+    }
+
     void Start () {
         // populate our array of particles
 
 
         temp_positions = new List<float3>();
-        spawn_box(grid_res/2, grid_res/2 , grid_res/2, 15, 15, 15);
-        
+        //spawn_box(grid_res/2, grid_res/2 , grid_res/2, 15, 15, 15);
+        //var c  = CPUVoxelizer.Voxelize();
+        meshToVoxel();
         
         num_particles = temp_positions.Count;
 
