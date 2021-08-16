@@ -24,7 +24,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         public float elastic_lambda;
         public float elastic_mu;
 
-        public float aForce; 
+        public float spacing; 
     }
 
     struct Cell {
@@ -89,12 +89,12 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     //         float y = voxels[i].position.y;
     //         float z = voxels[i].position.z;
 
-    public Mesh bust;
+    //public Mesh bust;
 
 
 
     void spawn_box(int x, int y, int z, int box_x = 8, int box_y = 8, int box_z = 8) {
-        const float spacing = 0.25f;
+        const float spacing = 0.5f;
         for (float i = -box_x / 2; i < box_x / 2; i += spacing) {
             for (float j = -box_y / 2; j < box_y / 2; j += spacing) {
                 for (float k = -box_z / 2; k < box_z / 2; k += spacing) {
@@ -106,29 +106,23 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         }
     }
     
-    void meshToVoxel() {
-        List<Voxel_t> voxels;
-        float unit;
-        float3 max = new float3(0,0,0);
-        float3 min = new float3(0,0,0);
+    void meshToVoxel(in List<Voxel_t> voxels) {
+        
+        float3 max = new float3(float.NegativeInfinity,float.NegativeInfinity,float.NegativeInfinity);
+        float3 min = new float3(float.PositiveInfinity,float.PositiveInfinity,float.PositiveInfinity);
         float scale;
-        CPUVoxelizer.Voxelize(bust, 24, out voxels, out unit);
+        //VoxelSystem.CPUVoxelizer.Voxelize(bust, 24, out voxels, out unit);
         for (int v = 0; v < voxels.Count; v++) {
-            if (v == 0) {
-            min.x = max.x = voxels[v].position.x;
-            min.y = max.y = voxels[v].position.y;
-            min.z = max.z = voxels[v].position.z;
-            }
-            else  {
+                
                 if (voxels[v].position.x > max.x) max.x = voxels[v].position.x;
                 if (voxels[v].position.y > max.y) max.y = voxels[v].position.y;
                 if (voxels[v].position.z > max.z) max.z = voxels[v].position.z;
                 
-                if (voxels[v].position.x < max.x) max.x = voxels[v].position.x;
-                if (voxels[v].position.y < max.x) max.y = voxels[v].position.y;
-                if (voxels[v].position.z < max.x) max.z = voxels[v].position.z;
-
-            }
+                if (voxels[v].position.x < min.x) min.x = voxels[v].position.x;
+                if (voxels[v].position.y < min.y) min.y = voxels[v].position.y;
+                if (voxels[v].position.z < min.z) min.z = voxels[v].position.z;
+                
+            
 
         }
         scale = math.min(max.x-min.x, max.y-min.y);
@@ -137,13 +131,23 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         if (scale == max.x-min.x) minimum = min.x;
         else if (scale == max.y-min.y) minimum = min.y;
         else minimum = min.z;
-
+        float res = (grid_res-10);
         for (int v = 0; v < voxels.Count; v++) {
-            var pos = math.float3((voxels[v].position.x - minimum)/scale, (voxels[v].position.y - minimum)/scale, (voxels[v].position.z - minimum)/scale);
-            temp_positions.Add(pos);
+            var pos = math.float3((voxels[v].position.x - min.x)/scale * res, (voxels[v].position.y - min.y)/scale * res, (voxels[v].position.z - min.z)/scale * res);
+            
+            //Debug.Log(scale);
+            if (pos.x < 0 || pos.y < 0 || pos.z < 0) {
+                Debug.Log(pos);
+                Debug.Log(v);
+            }
+            temp_positions.Add(pos + new float3(2f, 2f, 2f));
 
         }
+        
 
+    }
+    void scaleToGrid() {
+        
     }
 
     void Start () {
@@ -151,25 +155,26 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
 
         temp_positions = new List<float3>();
-        //spawn_box(grid_res/2, grid_res/2 , grid_res/2, 15, 15, 15);
+        spawn_box(grid_res/2, grid_res/2 , grid_res/2, 15, 15, 15);
         //var c  = CPUVoxelizer.Voxelize();
-        //meshToVoxel();
+        
         //spawn_box(grid_res/2, grid_res/2 , grid_res/2, grid_res/2, grid_res/2, grid_res/2);
         //voxel_positions();
 
-        float unit;
-        VoxelSystem.CPUVoxelizer.Voxelize(mesh, resolution, out voxels, out unit);
+        // float unit;
+        // VoxelSystem.CPUVoxelizer.Voxelize(mesh, resolution, out voxels, out unit);
+        // //meshToVoxel(voxels);
 
 
 
-         for (int i = 0; i < voxels.Count; i++) {
-            var voxel = voxels[i];
-            voxel.position = voxel.position*0.0025f + new Vector3(5f, 5f, 5f) ;
-            //voxels[i] = voxel;
-            Debug.Log(voxel.position);
+        //  for (int i = 0; i < voxels.Count; i++) {
+        //     var voxel = voxels[i];
+        //     voxel.position = voxel.position*0.0025f + new Vector3(5f, 5f, 5f) ;
+        //     //voxels[i] = voxel;
+        //     Debug.Log(voxel.position);
 
-            temp_positions.Add(voxel.position);
-         }
+        //     temp_positions.Add(voxel.position);
+        //  }
         
 
 
@@ -190,7 +195,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.mass = 1.0f;
 
             if (i >= ( num_particles / 2)) {p.elastic_lambda = 10.0f;}
-            else {p.elastic_lambda = 100.0f;}
+            else {p.elastic_lambda = 10.0f;}
            // p.elastic_lambda = lambda;
             
             p.elastic_mu = mu;
@@ -274,11 +279,11 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     private void Update() {
         HandleMouseInteraction();
 
-        // for (int i = 0; i < iterations; ++i) {
-        //     Simulate();
+        for (int i = 0; i < iterations; ++i) {
+            Simulate();
 
-        // }
-        Simulate();
+        }
+        
 
         sim_renderer.RenderFrame(ps);
     }
@@ -548,7 +553,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 if (math.dot(dist, dist) < 100.0f) {
                     var force = math.normalize(dist) * 2;
                     p.v = force * 2;
-                    p.aForce = math.sqrt(math.pow(force.x, 2) + math.pow(force.y, 2) + math.pow(force.z, 2));
+                    //p.aForce = math.sqrt(math.pow(force.x, 2) + math.pow(force.y, 2) + math.pow(force.z, 2));
                 }
 
                 if (math.dot(dist, dist) < 0.2f) {

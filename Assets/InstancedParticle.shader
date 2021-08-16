@@ -4,6 +4,7 @@
         _Test1 ("Test1", COLOR) = (1,1,0.5,1)
         _Force ("Force", COLOR) = (1, 0, 1, 1)
         _Size ("Size", float) = 0.035
+        _Skin ("Skin", COLOR) = (0.76,0.55,0.57,1)
     }
 
     SubShader {
@@ -36,7 +37,7 @@
                 float elastic_lambda;
                 float elastic_mu;
 
-                float aForce;
+                float spacing;
             };
 
             struct v2f {
@@ -49,6 +50,7 @@
             float4 _Test2;
             float4 _Test1;
             float4 _Force;
+            float4 _Skin;
 
 
             StructuredBuffer<Particle> particle_buffer;
@@ -59,7 +61,7 @@
                 float4 data = float4((particle_buffer[instanceID].x.xyz - float3(32, 32, 32)) * 0.1, 1.0);
                 
                 // Scaling vertices by our base size param (configurable in the material) and the mass of the particle
-                float3 localPosition = v.vertex.xyz * (0.02 * data.w);
+                float3 localPosition = v.vertex.xyz * (0.03 * data.w);
                 float3 worldPosition = data.xyz + localPosition;
 				
 
@@ -79,19 +81,14 @@
 
                 //assign color based on lambda
                 if (particle_buffer[instanceID].elastic_lambda > 10.0f) {
-                    if (particle_buffer[instanceID].aForce > 0) {
-                        o.color = _Force * lightDot;
-                    }
-                    else {
-                        o.color = _Test2 * lightDot;
-                    }
+                    
+                        o.color = _Skin * lightDot;
+                    
                 } else if (particle_buffer[instanceID].elastic_lambda > 0.0f) {
-                    if (particle_buffer[instanceID].aForce > 0) {
-                        o.color = _Force * lightDot;
-                    }
-                    else {
-                        o.color = _Test1 * lightDot;
-                    }
+                    
+                   
+                        o.color = _Skin * lightDot;
+                    
                 } 
                 
                 return o;
