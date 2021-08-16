@@ -32,6 +32,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         public float padding; // unused
     }
     
+
     const int grid_res = 24;
 
     //number of grid cells
@@ -41,7 +42,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     const int division = 16;
     
     // simulation parameters
-    const float dt = 0.1f; // timestep
+    const float dt = 0.2f; // timestep
     const float iterations = (int)(1.0f / dt);
     const float gravity = -0.5f;
 
@@ -68,15 +69,47 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     float3 mouse_pos;
     float2 [] mouse_rect = new float2[4];
 
+    //for voxels
+    public List<VoxelSystem.Voxel_t> voxels;
+	[SerializeField] protected Mesh mesh;
+    [SerializeField] protected int resolution = 24;
+    [SerializeField] protected bool useUV = false;
+
 
     //UI
+    // void voxel_positions () {
+        
+    //     float unit;
+    //     VoxelSystem.CPUVoxelizer.Voxelize(mesh, resolution, out voxels, out unit);
+        
 
+    //     for (int i = 0; i < voxels.Count; i++) {
+    //         float x = voxels[i].position.x;
+    //         float y = voxels[i].position.y;
+    //         float z = voxels[i].position.z;
 
+    //         var pos = math.float3(x * 0.01f + 5.0f, y * 0.01f + 5.0f, z * 0.01f + 5.0f);
+
+    //         // if (temp_positions.Count > 0 && i > 0) {
+    //         //     var dist = pos - temp_positions[i-1];
+    //         //     var length = math.sqrt(math.dot(pos, pos));
+
+    //         //     if (length > 0.4f && length < 1.0f) {
+    //         //         temp_positions.Add(pos);
+    //         //     }
+    //         // }
+
+    //         temp_positions.Add(pos);
+             
+
+    //     }
+        
+    // }
 
 
 
     void spawn_box(int x, int y, int z, int box_x = 8, int box_y = 8, int box_z = 8) {
-        const float spacing = 0.5f;
+        const float spacing = 0.25f;
         for (float i = -box_x / 2; i < box_x / 2; i += spacing) {
             for (float j = -box_y / 2; j < box_y / 2; j += spacing) {
                 for (float k = -box_z / 2; k < box_z / 2; k += spacing) {
@@ -93,10 +126,29 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
 
         temp_positions = new List<float3>();
-        spawn_box(grid_res/2, grid_res/2 , grid_res/2, 15, 15, 15);
+        //spawn_box(grid_res/2, grid_res/2 , grid_res/2, grid_res/2, grid_res/2, grid_res/2);
+        //voxel_positions();
+
+        float unit;
+        VoxelSystem.CPUVoxelizer.Voxelize(mesh, resolution, out voxels, out unit);
+
+
+
+         for (int i = 0; i < voxels.Count; i++) {
+            var voxel = voxels[i];
+            voxel.position = voxel.position*0.0025f + new Vector3(5f, 5f, 5f) ;
+            //voxels[i] = voxel;
+            Debug.Log(voxel.position);
+
+            temp_positions.Add(voxel.position);
+         }
         
+
+
         
         num_particles = temp_positions.Count;
+
+        Debug.Log(num_particles + " " + num_cells);
 
         ps = new NativeArray<Particle>(num_particles, Allocator.Persistent);
         Fs = new NativeArray<float3x3>(num_particles, Allocator.Persistent);
@@ -194,10 +246,11 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     private void Update() {
         HandleMouseInteraction();
 
-        for (int i = 0; i < iterations; ++i) {
-            Simulate();
+        // for (int i = 0; i < iterations; ++i) {
+        //     Simulate();
 
-        }
+        // }
+        Simulate();
 
         sim_renderer.RenderFrame(ps);
     }
@@ -215,7 +268,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
             mouse_pos = math.float3(cursor_pos.x * grid_res, cursor_pos.y * grid_res, cursor_pos.z * grid_res);
 
-            //Debug.Log("Mouse pos:" + mouse_pos);
+            
             
         }
     }
