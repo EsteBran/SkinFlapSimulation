@@ -33,6 +33,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     }
     
     const int grid_res = 24;
+
+    //number of grid cells
     const int num_cells = grid_res * grid_res * grid_res;
 
     // batch size for the job system. just determined experimentally
@@ -85,26 +87,14 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             }
         }
     }
-
-
-    // void spawn_rectangle( int x, int y, int width = 2, int height = 10) {
-    //     const float spacing = 0.2f;
-    //     for (float i = - width / 2; i < width / 2; i += spacing) {
-    //         for (float j = - height / 2; j < height / 2; j += spacing) {
-    //             var pos = math.float2(x + i, y + j);
-
-    //             temp_positions.Add(pos);
-    //         }
-    //     }
-    // }
     
     void Start () {
         // populate our array of particles
 
-        temp_positions = new List<float3>();
-        spawn_box(grid_res/2, grid_res/2 , grid_res/2, grid_res/2, grid_res/2, grid_res/2);
-        
 
+        temp_positions = new List<float3>();
+        spawn_box(grid_res/2, grid_res/2 , grid_res/2, 15, 15, 15);
+        
         
         num_particles = temp_positions.Count;
 
@@ -165,7 +155,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             weights[0] = 0.5f * math.pow(0.5f - cell_diff, 2);
             weights[1] = 0.75f - math.pow(cell_diff, 2);
             weights[2] = 0.5f * math.pow(0.5f + cell_diff, 2);
-           // Debug.Log(p.x.xyz);
+           
             float density = 0.0f;
             // iterate over neighbouring 3x3x3 cells
             for (int gx = 0; gx < 3; ++gx) {
@@ -212,22 +202,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         sim_renderer.RenderFrame(ps);
     }
 
-    void OnGUI() {
-        float x_coord = mouse_pos.x/grid_res * Screen.width;
-        float y_coord = mouse_pos.y/grid_res * Screen.height;
 
-
-        float width = mouse_radius/grid_res * Screen.width;
-        float height = mouse_radius/grid_res * Screen.height;
-        GUI.Label(new Rect(25, 25, 200, 30), "Framerate: " + 1/Time.deltaTime);
-        
-
-        Rect screenRect = new Rect(x_coord - width/2, Screen.height - y_coord - height/2, width, height);
-        
-
-        //GUI.Box(screenRect, "");
-
-    }
 
     void HandleMouseInteraction() {
         mouse_down = false;
@@ -235,10 +210,13 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             mouse_down = true;
             var mp = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
-            mouse_pos = math.float3(mp.x * grid_res, mp.y * grid_res, mp.z * grid_res);
+            Cutter cutter =  GameObject.Find("3D_Cursor").GetComponent<Cutter>();
+            Vector3 cursor_pos = cutter.mousePos;
 
+            mouse_pos = math.float3(cursor_pos.x * grid_res, cursor_pos.y * grid_res, cursor_pos.z * grid_res);
 
-            //Debug.Log(mouse_pos.x + " " + mouse_pos.y);
+            //Debug.Log("Mouse pos:" + mouse_pos);
+            
         }
     }
     
@@ -356,7 +334,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                          // map 3D to 1D index in grid x*WIDTH*DEPTH + y*WIDTH + z
                         int cell_index = ((int)cell_x.x)*grid_res*grid_res + ((int)cell_x.y)*grid_res + ((int)cell_x.z);
                         //if (cell_index > 32768) Debug.Log(cell_idx);
-                        int tPrint = 13824 - cell_index; 
+                        //int tPrint = 13824 - cell_index; 
                         //string pRINT = string.Format("index is {0}", tPrint); 
                         //Debug.Log(pRINT);
                         Cell cell = grid[cell_index];
@@ -452,10 +430,10 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                     float weight = weights[gx].x * weights[gy].y * weights[gz].z;
 
                     uint3 cell_x = math.uint3(cell_idx.x + gx - 1, cell_idx.y + gy - 1, cell_idx.z + gz - 1);
-                     // map 3D to 1D index in grid x*WIDTH*DEPTH + y*WIDTH + z
+                    
+                    // map 3D to 1D index in grid x*WIDTH*DEPTH + y*WIDTH + z
                     int cell_index = ((int)cell_x.x)*grid_res*grid_res + ((int)cell_x.y)*grid_res + ((int)cell_x.z);
                     
-
                     float3 dist = (cell_x - p.x) + 0.5f;
                     float3 weighted_velocity = grid[cell_index].v * weight;
 
@@ -486,27 +464,6 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 var dist_z = dist.z;
 
                
-                // if (math.abs(dist_x) < bound_x || math.abs(dist_y) < bound_y) {
-                //     float norm_factor =  1; //(math.length(dist) / mouse_radius);
-                //     norm_factor = math.pow(math.sqrt(norm_factor), 2);
-
-                //     float2 force = new float2(0.0f, 0.0f);
-
-                //     if (dist_x < 0.0f && dist_x > -bound_x) {
-                //         force = math.float2(-1.0f, 0.0f) * 0.5f * norm_factor;
-                //     } else if (dist_x > 0.0f && dist_x < bound_x) {
-                //         force = math.float2(1.0f, 0.0f) * 0.5f * norm_factor;
-                //     } else if (dist_y < 0.0f && dist_y > -bound_y) {
-                //         force = math.float2(0.0f, -1.0f) * 0.5f * norm_factor;
-                //     } else if (dist_y > 0.0f && dist_y < bound_y) {
-                //         force = math.float2(0.0f, 1.0f) * 0.5f * norm_factor;
-                //     }
-
-                //     //Debug.Log(dist_x + " " + dist_y);
-                    
-                //     p.v += force*2;
-                // }       
-                //p.aForce = 0;
                 if (math.dot(dist, dist) < 100.0f) {
                     var force = math.normalize(dist) * 2;
                     p.v = force * 2;

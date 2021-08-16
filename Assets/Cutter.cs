@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Mathematics;
 
 public class Cutter : MonoBehaviour
 {   
 
-    private Vector3 mousePos;
+    public Vector3 mousePos;
     float depth = 5f;
     public static bool CamControl = false;
 
@@ -33,6 +34,7 @@ public class Cutter : MonoBehaviour
         mousePos = Camera.main.ScreenToWorldPoint(mousePos);
         //Debug.Log("x:" + mousePos.x.ToString() + " y:" + mousePos.y.ToString() + " z:" + depth);
         transform.position = mousePos;
+        //mousePos -= new Vector3(32.0f, 32.0f, 32.0f);
         }
     }
 }

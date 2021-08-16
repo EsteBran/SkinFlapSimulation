@@ -1,17 +1,16 @@
   Shader "Instanced/InstancedParticle" {
     Properties {
-        _Colour ("Colour", COLOR) = (1, 1, 1, 1)
-        _Colour1 ("Colour2", COLOR) = (0.5, 0.5, 0.5, 0.5)
-        _Colour2 ("Colour2", COLOR) = (0,0,0,0)
+        _Test2 ("Test2", COLOR) = (1,0,0,1)
+        _Test1 ("Test1", COLOR) = (1,1,0.5,1)
         _Force ("Force", COLOR) = (1, 0, 1, 1)
         _Size ("Size", float) = 0.035
     }
 
     SubShader {
-        Tags { "Queue"="Geometry+1" }
+        Tags { "Queue"="Overlay+1" }
         ZTest LEqual
         Pass {
-            Tags { "LightMode"="ForwardBase" "Queue" = "Opaque" "RenderType" = "Opaque" "IgnoreProjector" = "False" }
+            Tags { "LightMode"="ForwardBase" "Queue" = "Transparent" "RenderType" = "Transparent" "IgnoreProjector" = "False" }
             Cull Back
             ZWrite On
             //Blend SrcAlpha OneMinusSrcAlpha
@@ -42,15 +41,15 @@
 
             struct v2f {
                 float4 pos : SV_POSITION;
-                fixed4 color : COLOR;
-                half3 worldNormal : TEXCOORD0;
+                float4 color : COLOR;
             };
 
-            float _Size;
-            fixed4 _Colour;
-            fixed4 _Colour1;
-            fixed4 _Colour2;
-            fixed4 _Force;
+            
+            //float _Size;
+            float4 _Test2;
+            float4 _Test1;
+            float4 _Force;
+
 
             StructuredBuffer<Particle> particle_buffer;
 
@@ -60,11 +59,15 @@
                 float4 data = float4((particle_buffer[instanceID].x.xyz - float3(32, 32, 32)) * 0.1, 1.0);
                 
                 // Scaling vertices by our base size param (configurable in the material) and the mass of the particle
-                float3 localPosition = v.vertex.xyz * (_Size * data.w);
+                float3 localPosition = v.vertex.xyz * (0.08 * data.w);
                 float3 worldPosition = data.xyz + localPosition;
-				//print(worldPosition);
+				
+
                 // project into camera space
                 v2f o;
+                o.pos = float4(0,0,0,0);
+                o.color = float4(0,0,0,0);
+
                 o.pos = mul(UNITY_MATRIX_VP, float4(worldPosition, 1.0f));
 
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
@@ -80,14 +83,14 @@
                         o.color = _Force * lightDot;
                     }
                     else {
-                        o.color = _Colour1 * lightDot;
+                        o.color = _Test2 * lightDot;
                     }
                 } else if (particle_buffer[instanceID].elastic_lambda > 0.0f) {
                     if (particle_buffer[instanceID].aForce > 0) {
                         o.color = _Force * lightDot;
                     }
                     else {
-                        o.color = _Colour * lightDot;
+                        o.color = _Test1 * lightDot;
                     }
                 } 
                 
@@ -95,12 +98,10 @@
             }
 
             fixed4 frag (v2f i, uint instanceID : SV_InstanceID) : SV_Target {
-                
-                
+
                 return i.color;
             }
 
-            
 
             ENDCG
         }

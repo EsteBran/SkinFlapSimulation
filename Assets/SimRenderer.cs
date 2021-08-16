@@ -9,7 +9,7 @@ public class SimRenderer : MonoBehaviour {
     // Compute buffers used for indirect mesh drawing
     ComputeBuffer point_buffer;
     ComputeBuffer args_buffer;
-    uint[] args = new uint[7] { 0, 0, 0, 0, 0, 0, 0};
+    uint[] args = new uint[8] { 0, 0, 0, 0, 0, 0, 0, 0};
     
     Bounds bounds;
 

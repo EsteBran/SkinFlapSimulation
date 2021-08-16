@@ -4,7 +4,7 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - instance_mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  - instance_mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   - instance_material: {fileID: 2100000, guid: 5f8f16fbe6eddec4eb2efc0bbe097d55, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
