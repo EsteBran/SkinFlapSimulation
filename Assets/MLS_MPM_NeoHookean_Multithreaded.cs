@@ -3,6 +3,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Burst;
 using UnityEngine;
+using VoxelSystem;
 
 using UnityEngine.Jobs;
 using UnityEngine.UI;
@@ -23,7 +24,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         public float elastic_lambda;
         public float elastic_mu;
 
-        public float aForce; 
+        public float spacing; 
     }
 
     struct Cell {
@@ -80,9 +81,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
 
 
-
     void spawn_box(int x, int y, int z, int box_x = 8, int box_y = 8, int box_z = 8) {
-        const float spacing = 0.25f;
+        const float spacing = 0.5f;
         for (float i = -box_x / 2; i < box_x / 2; i += spacing) {
             for (float j = -box_y / 2; j < box_y / 2; j += spacing) {
                 for (float k = -box_z / 2; k < box_z / 2; k += spacing) {
@@ -135,11 +135,15 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
     }
     
+
     void Start () {
         // populate our array of particles
 
 
         temp_positions = new List<float3>();
+        //spawn_box(grid_res/2, grid_res/2 , grid_res/2, 15, 15, 15);
+        //var c  = CPUVoxelizer.Voxelize();
+        
         //spawn_box(grid_res/2, grid_res/2 , grid_res/2, grid_res/2, grid_res/2, grid_res/2);
 
         float unit;
@@ -171,8 +175,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.C = 0;
             p.mass = 1.0f;
 
-            if (i >= ( num_particles / 2)) {p.elastic_lambda = 10.0f;}
-            else {p.elastic_lambda = 100.0f;}
+            if (i >= ( num_particles / 2)) {p.elastic_lambda = 100.0f;}
+            else {p.elastic_lambda = 10.0f;}
            // p.elastic_lambda = lambda;
             
             p.elastic_mu = mu;
@@ -256,11 +260,11 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     private void Update() {
         HandleMouseInteraction();
 
-        // for (int i = 0; i < iterations; ++i) {
-        //     Simulate();
+        for (int i = 0; i < iterations; ++i) {
+            Simulate();
 
-        // }
-        Simulate();
+        }
+        
 
         sim_renderer.RenderFrame(ps);
     }
@@ -532,7 +536,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 if (math.dot(dist, dist) < 100.0f) {
                     var force = math.normalize(dist) * 2;
                     p.v = force * 2;
-                    p.aForce = math.sqrt(math.pow(force.x, 2) + math.pow(force.y, 2) + math.pow(force.z, 2));
+                    //p.aForce = math.sqrt(math.pow(force.x, 2) + math.pow(force.y, 2) + math.pow(force.z, 2));
                 }
 
                 if (math.dot(dist, dist) < 0.2f) {
