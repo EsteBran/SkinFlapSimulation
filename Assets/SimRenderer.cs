@@ -24,7 +24,7 @@ public class SimRenderer : MonoBehaviour {
         args_buffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
         uint numIndices = (uint)instance_mesh.GetIndexCount(0);
         
-        Debug.Log(numIndices);
+        //Debug.Log(numIndices);
 
         args[0] = numIndices;
         args[1] = (uint)point_buffer.count;
