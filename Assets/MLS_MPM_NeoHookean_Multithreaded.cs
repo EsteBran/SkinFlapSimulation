@@ -45,7 +45,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     // simulation parameters
     const float dt = 0.2f; // timestep
     const float iterations = (int)(1.0f / dt);
-    const float gravity = -0.5f;
+    const float gravity = -0.0f;
 
     // Lamé parameters for stress-strain relationship
     const float lambda = 10.0f;
@@ -111,6 +111,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         float3 max = new float3(float.NegativeInfinity,float.NegativeInfinity,float.NegativeInfinity);
         float3 min = new float3(float.PositiveInfinity,float.PositiveInfinity,float.PositiveInfinity);
         float scale;
+        float mostNeg;
+        float large;
         //VoxelSystem.CPUVoxelizer.Voxelize(bust, 24, out voxels, out unit);
         for (int v = 0; v < voxels.Count; v++) {
                 
@@ -125,24 +127,45 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             
 
         }
-        scale = math.min(max.x-min.x, max.y-min.y);
-        scale = math.min(scale, max.z-min.z);
-        float minimum;
-        if (scale == max.x-min.x) minimum = min.x;
-        else if (scale == max.y-min.y) minimum = min.y;
-        else minimum = min.z;
-        float res = (grid_res-10);
+
+        mostNeg = math.min(math.min(min.x, min.y), min.z);
+        large = math.max(math.max(max.x, max.y), max.z);
+        scale = (large-mostNeg)/(grid_res-1);
+        
         for (int v = 0; v < voxels.Count; v++) {
-            var pos = math.float3((voxels[v].position.x - min.x)/scale * res, (voxels[v].position.y - min.y)/scale * res, (voxels[v].position.z - min.z)/scale * res);
-            
-            //Debug.Log(scale);
-            if (pos.x < 0 || pos.y < 0 || pos.z < 0) {
+                var pos = math.float3(voxels[v].position.x + -mostNeg, voxels[v].position.y + -mostNeg, voxels[v].position.z + -mostNeg);
+                //Debug.Log("Before" + pos.ToString());
+                pos/=scale;
+                pos+=1;
+                //Debug.Log("After" + pos.ToString());
+               if ( pos.x < 1 || pos.y < 1 || pos.z < 1) {
                 Debug.Log(pos);
-                Debug.Log(v);
-            }
-            temp_positions.Add(pos + new float3(2f, 2f, 2f));
+                Debug.Log(v);   
+               }
+                
+            
+            temp_positions.Add(pos);
 
         }
+        
+        // scale = math.min(max.x-min.x, max.y-min.y);
+        // scale = math.min(scale, max.z-min.z);
+        // float minimum;
+        // if (scale == max.x-min.x) minimum = min.x;
+        // else if (scale == max.y-min.y) minimum = min.y;
+        // else minimum = min.z;
+        // float res = (grid_res-10);
+        // for (int v = 0; v < voxels.Count; v++) {
+        //     var pos = math.float3((voxels[v].position.x - min.x)/scale * res, (voxels[v].position.y - min.y)/scale * res, (voxels[v].position.z - min.z)/scale * res);
+            
+        //     //Debug.Log(scale);
+        //     if (pos.x < 0 || pos.y < 0 || pos.z < 0) {
+        //         Debug.Log(pos);
+        //         Debug.Log(v);
+        //     }
+        //     temp_positions.Add(pos + new float3(2f, 2f, 2f));
+
+        // }
         
 
     }
@@ -155,15 +178,15 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
 
         temp_positions = new List<float3>();
-        spawn_box(grid_res/2, grid_res/2 , grid_res/2, 15, 15, 15);
+        //spawn_box(grid_res/2, grid_res/2 , grid_res/2, 15, 15, 15);
         //var c  = CPUVoxelizer.Voxelize();
         
         //spawn_box(grid_res/2, grid_res/2 , grid_res/2, grid_res/2, grid_res/2, grid_res/2);
         //voxel_positions();
 
-        // float unit;
-        // VoxelSystem.CPUVoxelizer.Voxelize(mesh, resolution, out voxels, out unit);
-        // //meshToVoxel(voxels);
+        float unit;
+        VoxelSystem.CPUVoxelizer.Voxelize(mesh, resolution, out voxels, out unit);
+        meshToVoxel(voxels);
 
 
 
