@@ -219,6 +219,64 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &170592431
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+      propertyPath: m_Name
+      value: hepatitis liver
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: -7635826562936255635, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
 --- !u!1001 &385246628
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -673,8 +731,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41ef38c4db9e0d94baa604cf21649005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  resolution: 56
+  mesh: {fileID: -2432090755550338912, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
+  resolution: 80
   useUV: 0
 --- !u!114 &963194230
 MonoBehaviour:
@@ -688,7 +746,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdf29336c7315824299878876968bd72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instance_mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  instance_mesh: {fileID: -5495902117074765545, guid: 40e02b3206e195b429ca4d7b5b7112c9, type: 3}
   instance_material: {fileID: 2100000, guid: a132d8220f3b6044b9149d68b0671290, type: 2}
 --- !u!114 &963194231
 MonoBehaviour:

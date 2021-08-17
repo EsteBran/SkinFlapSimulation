@@ -176,7 +176,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.mass = 1.0f;
 
             if (i >= ( num_particles / 2)) {p.elastic_lambda = 100.0f;}
-            else {p.elastic_lambda = 10.0f;}
+            else {p.elastic_lambda = 100.0f;}
            // p.elastic_lambda = lambda;
             
             p.elastic_mu = mu;

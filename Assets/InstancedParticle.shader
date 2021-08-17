@@ -5,6 +5,7 @@
         _Force ("Force", COLOR) = (1, 0, 1, 1)
         _Size ("Size", float) = 0.035
         _Skin ("Skin", COLOR) = (0.76,0.55,0.57,1)
+        _Liver ("Liver", COLOR) = (0.422, 0.17, 0.117, 1)
     }
 
     SubShader {
@@ -51,6 +52,7 @@
             float4 _Test1;
             float4 _Force;
             float4 _Skin;
+            float4 _Liver;
 
 
             StructuredBuffer<Particle> particle_buffer;
@@ -82,12 +84,12 @@
                 //assign color based on lambda
                 if (particle_buffer[instanceID].elastic_lambda > 10.0f) {
                     
-                        o.color = _Skin * lightDot;
+                        o.color = _Liver * lightDot;
                     
                 } else if (particle_buffer[instanceID].elastic_lambda > 0.0f) {
                     
                    
-                        o.color = _Test1 * lightDot;
+                        o.color = _Liver * lightDot;
                     
                 } 
                 
