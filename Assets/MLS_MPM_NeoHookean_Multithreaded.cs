@@ -33,7 +33,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     }
     
 
-    const int grid_res = 24;
+    const int grid_res = 32;
 
     //number of grid cells
     const int num_cells = grid_res * grid_res * grid_res;
@@ -77,34 +77,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
 
     //UI
-    // void voxel_positions () {
-        
-    //     float unit;
-    //     VoxelSystem.CPUVoxelizer.Voxelize(mesh, resolution, out voxels, out unit);
-        
 
-    //     for (int i = 0; i < voxels.Count; i++) {
-    //         float x = voxels[i].position.x;
-    //         float y = voxels[i].position.y;
-    //         float z = voxels[i].position.z;
-
-    //         var pos = math.float3(x * 0.01f + 5.0f, y * 0.01f + 5.0f, z * 0.01f + 5.0f);
-
-    //         // if (temp_positions.Count > 0 && i > 0) {
-    //         //     var dist = pos - temp_positions[i-1];
-    //         //     var length = math.sqrt(math.dot(pos, pos));
-
-    //         //     if (length > 0.4f && length < 1.0f) {
-    //         //         temp_positions.Add(pos);
-    //         //     }
-    //         // }
-
-    //         temp_positions.Add(pos);
-             
-
-    //     }
-        
-    // }
 
 
 
@@ -120,6 +93,47 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             }
         }
     }
+
+    void meshNormalized(in List<VoxelSystem.Voxel_t> voxels) {
+        float3 min = new float3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+        float3 max = new float3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
+
+        for (int i = 0; i < voxels.Count; i++) {
+            var pos = voxels[i].position;
+
+            min.x = math.min(min.x, pos.x);
+            min.y = math.min(min.y, pos.y);
+            min.z = math.min(min.z, pos.z);
+
+            max.x = math.max(max.x, pos.x);
+            max.y = math.max(max.y, pos.y);
+            max.z = math.max(max.z, pos.z);
+        }
+
+        float scale_x, scale_y, scale_z;
+
+        scale_x = math.abs(max.x - min.x);
+        scale_y = math.abs(max.y - min.y);
+        scale_z = math.abs(max.z - min.z);
+
+        Debug.Log(scale_x + " " + scale_y + " " + scale_z);
+
+        float scale = math.max(scale_x, math.max(scale_y, scale_z));
+
+        for(int j = 0; j < voxels.Count; j++) {
+            var position = voxels[j].position;
+
+            position = (position - new Vector3(scale, scale, scale)) / (2*scale) + new Vector3(1.0f, 1.0f, 1.0f) ;
+            position *= (grid_res - 6);
+
+            //Debug.Log(position);
+
+            temp_positions.Add(position);
+
+        }
+
+
+    }
     
     void Start () {
         // populate our array of particles
@@ -127,21 +141,17 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
         temp_positions = new List<float3>();
         //spawn_box(grid_res/2, grid_res/2 , grid_res/2, grid_res/2, grid_res/2, grid_res/2);
-        //voxel_positions();
 
         float unit;
         VoxelSystem.CPUVoxelizer.Voxelize(mesh, resolution, out voxels, out unit);
+        meshNormalized(voxels);
+        // for (int i = 0; i < voxels.Count; i++) {
+        //     var voxel = voxels[i];
+        //     voxel.position = voxel.position*0.0045f + new Vector3(5f, 5f, 5f) ;
+        //     //Debug.Log(voxel.position);
 
-
-
-         for (int i = 0; i < voxels.Count; i++) {
-            var voxel = voxels[i];
-            voxel.position = voxel.position*0.0025f + new Vector3(5f, 5f, 5f) ;
-            //voxels[i] = voxel;
-            Debug.Log(voxel.position);
-
-            temp_positions.Add(voxel.position);
-         }
+        //     temp_positions.Add(voxel.position);
+        // }
         
 
 
@@ -202,7 +212,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             var p = ps[i];
 
             // quadratic interpolation weights
-            float3 cell_idx = math.floor(p.x);
+            float3 cell_idx = math.floor (p.x) ;
             float3 cell_diff = (p.x - cell_idx) - 0.5f;
             weights[0] = 0.5f * math.pow(0.5f - cell_diff, 2);
             weights[1] = 0.75f - math.pow(cell_diff, 2);
@@ -367,7 +377,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 var eq_16_term_0 = -volume * 4 * stress * dt;
 
                 // quadratic interpolation weights
-                uint3 cell_idx = (uint3)p.x;
+                uint3 cell_idx = (uint3) p.x ;
                 float3 cell_diff = (p.x - cell_idx) - 0.5f;
                 weights[0] = 0.5f * math.pow(0.5f - cell_diff, 2);
                 weights[1] = 0.75f - math.pow(cell_diff, 2);
@@ -438,9 +448,11 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 int x = i / (grid_res * grid_res);
                 int y = (i / grid_res) % grid_res;
                 int z = i % grid_res;
-                if (x < 6 || x > grid_res - 6) { cell.v.x = 0; }
-                if (y < 6 || y > grid_res - 6) { cell.v.y = 0; }
-                if (z < 6 || z > grid_res - 6) { cell.v.z = 0; }
+
+                int res = 3;
+                if (x < res || x > grid_res - res) { cell.v.x = 0; }
+                if (y < res || y > grid_res - res) { cell.v.y = 0; }
+                if (z < res || z > grid_res - res) { cell.v.z = 0; }
                 
 
                 grid[i] = cell;
@@ -464,7 +476,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.v = 0;
 
             // quadratic interpolation weights
-            uint3 cell_idx = (uint3)p.x;
+            uint3 cell_idx = (uint3)p.x ;
             float3 cell_diff = (p.x - cell_idx) - 0.5f;
             var weights = stackalloc float3[] {
                 0.5f * math.pow(0.5f - cell_diff, 2),
