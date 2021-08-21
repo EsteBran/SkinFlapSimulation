@@ -3,7 +3,7 @@
 - [ ] Refactor program into a more modular version in order to be able to add more features
 - - [x] Make it use 3D coordinates instead of 2D
 - [ ] Interacting between mesh and particles
-- [ ] Be able to import custom objects/meshes (obj files)
+- [x] Be able to import custom objects/meshes (obj files)
 - [ ] Maybe using unity particle system
 - [x] Move simulation into 3D (might have to start with 3D depending on what we want to do)
 - [ ] Use shaders to parallelize simulation
