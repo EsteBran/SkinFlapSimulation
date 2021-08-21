@@ -585,12 +585,22 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 //                          0,0,0,
                 //                          0,0,0);
                 // }
-                float t = (-p.x.x*laser.x+math.pow(laser.x,2)-p.x.y*laser.y+math.pow(laser.y, 2)-p.x.z*laser.z+math.pow(laser.z, 2));
-                float h = (p.x.x*laserDir.x - 2*p.x.x*laserDir.x+p.x.y*laserDir.y - 2*p.x.y*laserDir.y+p.x.z*laserDir.z - 2*p.x.z*laserDir.z);
-                t /= h;
-                float distance = math.sqrt(math.pow(p.x.x-laser.x-laserDir.x*t, 2) + math.pow(p.x.y-laser.y-laserDir.y*t, 2) + math.pow(p.x.z-laser.z-laserDir.z*t, 2));
-              
-                if (distance < 1.0) {
+                // float t = (-p.x.x*laser.x+math.pow(laser.x,2)-p.x.y*laser.y+math.pow(laser.y, 2)-p.x.z*laser.z+math.pow(laser.z, 2));
+                // float h = (p.x.x*laserDir.x - 2*p.x.x*laserDir.x+p.x.y*laserDir.y - 2*p.x.y*laserDir.y+p.x.z*laserDir.z - 2*p.x.z*laserDir.z);
+                // t /= -h;
+                // float distance = math.sqrt(math.pow(p.x.x-laser.x-laserDir.x*t, 2) + math.pow(p.x.y-laser.y-laserDir.y*t, 2) + math.pow(p.x.z-laser.z-laserDir.z*t, 2));
+                
+                //From https://math.stackexchange.com/questions/1905533/find-perpendicular-distance-from-point-to-line-in-3d
+                float t;
+                float distance;
+                float3 boing = laserDir*5; 
+                float3 d = (laserDir*5 - laser) / math.sqrt(math.pow(boing.x-laser.x, 2) + math.pow(boing.y-laser.y, 2) + math.pow(boing.z-laser.z, 2));
+                float3 v = p.x - laser;
+                t = math.dot(d, v);
+                float3 P = laser + t * d;
+                distance = math.sqrt(math.pow(P.x-p.x.x, 2) + math.pow(P.x-p.x.y, 2) + math.pow(P.z-p.x.z, 2));
+                //Debug.Log($"Distance is {distance}");
+                if (distance < 10.0) {
                     p.mass = 0.0f;
                     p.v = 0.0f;
                     p.elastic_mu = 0.0f;
