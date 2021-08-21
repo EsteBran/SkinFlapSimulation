@@ -260,10 +260,11 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     private void Update() {
         HandleMouseInteraction();
 
-        for (int i = 0; i < iterations; ++i) {
-            Simulate();
+        // for (int i = 0; i < iterations; ++i) {
+        //     Simulate();
 
-        }
+        // }
+        Simulate();
         
 
         sim_renderer.RenderFrame(ps);
