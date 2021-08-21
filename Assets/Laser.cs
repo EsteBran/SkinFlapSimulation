@@ -19,7 +19,7 @@
  
      void Update() 
      {
-         if( Input.GetKey( KeyCode.Z ) ) {
+         if( true || Input.GetKey( KeyCode.Z ) ) {
              ShootLaserFromTargetPosition( transform.position, transform.right, laserMaxLength );
              Debug.Log(transform.right);
              laserLineRenderer.enabled = true;

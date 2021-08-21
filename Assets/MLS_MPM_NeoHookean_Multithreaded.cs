@@ -45,7 +45,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     // simulation parameters
     const float dt = 0.2f; // timestep
     const float iterations = (int)(1.0f / dt);
-    const float gravity = -0.0f;
+    const float gravity = -0.1f;
 
     // Lamé parameters for stress-strain relationship
     const float lambda = 10.0f;
@@ -75,6 +75,12 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 	[SerializeField] protected Mesh mesh;
     [SerializeField] protected int resolution = 24;
     [SerializeField] protected bool useUV = false;
+
+    [SerializeField] public static Transform laserPtr;
+    float3 laser;
+    float3 laserDir;
+
+    LineRenderer lineRenderer;
 
 
     //UI
@@ -137,6 +143,19 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     
 
     void Start () {
+        
+        laserPtr = GameObject.Find("kyle_saber_lp").transform;
+        
+        lineRenderer = GameObject.Find("kyle_saber_lp").AddComponent<LineRenderer>();
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.widthMultiplier = 0.2f;
+        
+
+        laser = new float3(laserPtr.position.x, laserPtr.position.y, laserPtr.position.z);
+        laserDir = new float3(laserPtr.right.x,laserPtr.right.y,laserPtr.right.z);
+        Debug.Log(laser);
+        Debug.Log(laserDir);
+        
         // populate our array of particles
 
 
@@ -258,6 +277,17 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     }
 
     private void Update() {
+        laser.x = laserPtr.position.x;
+        laser.y = laserPtr.position.y;
+        laser.z = laserPtr.position.z;
+
+        laserDir.x = laserPtr.right.x;
+        laserDir.y = laserPtr.right.y;
+        laserDir.z = laserPtr.right.z;
+
+        lineRenderer.SetPosition(0, laserPtr.position);
+        lineRenderer.SetPosition(1, laserPtr.position+laserPtr.right*5);
+
         HandleMouseInteraction();
 
         for (int i = 0; i < iterations; ++i) {
@@ -316,7 +346,9 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             Fs = Fs,
             mouse_down = mouse_down,
             mouse_pos = mouse_pos,
-            grid = grid
+            grid = grid,
+            laser = laser,
+            laserDir = laserDir
         }.Schedule(num_particles, division).Complete();
         Profiler.EndSample();
     }
@@ -472,6 +504,9 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
         [ReadOnly] public bool mouse_down;
         [ReadOnly] public float3 mouse_pos;
+
+        [ReadOnly] public float3 laser;
+        [ReadOnly] public float3 laserDir;
         
         public void Execute(int i) {
             Particle p = ps[i];
@@ -525,23 +560,37 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.x = math.clamp(p.x, 1, grid_res - 2);
             
             // mouse interaction
-            if (mouse_down) {
-                var dist = p.x - mouse_pos;
+            if (true || mouse_down) {
+                // var dist = p.x - mouse_pos;
 
-                var dist_x = dist.x;
-                var dist_y = dist.y;
-                var dist_z = dist.z;
+                // var dist_x = dist.x;
+                // var dist_y = dist.y;
+                // var dist_z = dist.z;
 
                
-                if (math.dot(dist, dist) < 100.0f) {
-                    var force = math.normalize(dist) * 2;
-                    p.v = force * 2;
-                    //p.aForce = math.sqrt(math.pow(force.x, 2) + math.pow(force.y, 2) + math.pow(force.z, 2));
-                }
+                // if (math.dot(dist, dist) < 100.0f) {
+                //     var force = math.normalize(dist) * 2;
+                //     p.v = force * 2;
+                //     //p.aForce = math.sqrt(math.pow(force.x, 2) + math.pow(force.y, 2) + math.pow(force.z, 2));
+                // }
 
-                if (math.dot(dist, dist) < 0.2f) {
+                // if (math.dot(dist, dist) < 0.2f) {
 
-                    //p.x = math.float2(100.0f, 50.0f + UnityEngine.Random.Range(0.0f, 100.0f));
+                //     //p.x = math.float2(100.0f, 50.0f + UnityEngine.Random.Range(0.0f, 100.0f));
+                //     p.mass = 0.0f;
+                //     p.v = 0.0f;
+                //     p.elastic_mu = 0.0f;
+                //     p.elastic_lambda = 0.0f;
+                //     p.C = math.float3x3 (0,0,0,
+                //                          0,0,0,
+                //                          0,0,0);
+                // }
+                float t = (-p.x.x*laser.x+math.pow(laser.x,2)-p.x.y*laser.y+math.pow(laser.y, 2)-p.x.z*laser.z+math.pow(laser.z, 2));
+                float h = (p.x.x*laserDir.x - 2*p.x.x*laserDir.x+p.x.y*laserDir.y - 2*p.x.y*laserDir.y+p.x.z*laserDir.z - 2*p.x.z*laserDir.z);
+                t /= h;
+                float distance = math.sqrt(math.pow(p.x.x-laser.x-laserDir.x*t, 2) + math.pow(p.x.y-laser.y-laserDir.y*t, 2) + math.pow(p.x.z-laser.z-laserDir.z*t, 2));
+              
+                if (distance < 1.0) {
                     p.mass = 0.0f;
                     p.v = 0.0f;
                     p.elastic_mu = 0.0f;
