@@ -43,7 +43,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     const int division = 16;
     
     // simulation parameters
-    const float dt = 0.2f; // timestep
+    const float dt = 0.15f; // timestep
     const float iterations = (int)(1.0f / dt);
     const float gravity = -0.05f;
 
@@ -592,17 +592,38 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 // t /= -h;
                 // float distance = math.sqrt(math.pow(p.x.x-laser.x-laserDir.x*t, 2) + math.pow(p.x.y-laser.y-laserDir.y*t, 2) + math.pow(p.x.z-laser.z-laserDir.z*t, 2));
                 
+                
+                
+                //-------------Attempt 2-------------------
                 //From https://math.stackexchange.com/questions/1905533/find-perpendicular-distance-from-point-to-line-in-3d
-                float t;
-                float distance;
-                float3 boing = laserDir*5; 
-                float3 d = (laserDir*5 - laser) / math.sqrt(math.pow(boing.x-laser.x, 2) + math.pow(boing.y-laser.y, 2) + math.pow(boing.z-laser.z, 2));
-                float3 v = p.x - laser;
-                t = math.dot(d, v);
-                float3 P = laser + t * d;
-                distance = math.sqrt(math.pow(P.x-p.x.x, 2) + math.pow(P.x-p.x.y, 2) + math.pow(P.z-p.x.z, 2));
+                //laserDir*5 + laser = C
+                // laser = B
+                //p.x*scale = A
+                //v = p.x*scale - laser
+                // t = v dot laserDir
+                
+                // float t;
+                // float distance;
+                float3 scale = new float3(0.1f, 0.1f, 0.1f);
+                // float3 boing = laserDir*5; 
+                // float3 d = (laserDir*5) / math.sqrt(math.pow(boing.x, 2) + math.pow(boing.y, 2) + math.pow(boing.z, 2));
+                // float3 v = p.x*scale - laser;
+                // t = math.dot(d, v);
+                // float3 P = laser + math.dot(t, d);
+                // distance = math.sqrt(math.pow(P.x-p.x.x*0.1f, 2) + math.pow(P.x-p.x.y*0.1f, 2) + math.pow(P.z-p.x.z*0.1f, 2));
                 //Debug.Log($"Distance is {distance}");
-                if (distance < 9.0f) {
+                
+                //--------------Attempt 3-------------
+                float3 BA = p.x*scale - laser;
+                float3 BC = laserDir*5;
+                
+                float3 d = math.cross(BA, BC);
+                float distance = math.sqrt(math.pow(d.x, 2) + math.pow(d.y, 2) + math.pow(d.z, 2)); 
+                float div = math.sqrt(math.pow(BC.x, 2) + math.pow(BC.y, 2) + math.pow(BC.z, 2));
+                distance /= div;
+
+
+                if (distance < 0.1f) {
                     p.mass = 0.0f;
                     p.v = 0.0f;
                     p.elastic_mu = 0.0f;
