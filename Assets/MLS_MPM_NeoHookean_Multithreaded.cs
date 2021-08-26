@@ -45,7 +45,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     // simulation parameters
     const float dt = 0.2f; // timestep
     const float iterations = (int)(1.0f / dt);
-    const float gravity = -0.1f;
+    const float gravity = -0.05f;
 
     // Lamé parameters for stress-strain relationship
     const float lambda = 10.0f;
@@ -194,9 +194,9 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.C = 0;
             p.mass = 1.0f;
 
-            if (i >= ( num_particles / 2)) {p.elastic_lambda = 100.0f;}
-            else {p.elastic_lambda = 100.0f;}
-           // p.elastic_lambda = lambda;
+            // if (i >= ( num_particles / 2)) {p.elastic_lambda = 100.0f;}
+            // else {p.elastic_lambda = 100.0f;}
+            p.elastic_lambda = lambda;
             
             p.elastic_mu = mu;
 
@@ -295,6 +295,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
         // }
         Simulate();
+        
         
 
         sim_renderer.RenderFrame(ps);
@@ -561,7 +562,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
             p.x = math.clamp(p.x, 1, grid_res - 2);
             
             // mouse interaction
-            if (true || mouse_down) {
+            if ( true || mouse_down) {
                 // var dist = p.x - mouse_pos;
 
                 // var dist_x = dist.x;
@@ -601,7 +602,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 float3 P = laser + t * d;
                 distance = math.sqrt(math.pow(P.x-p.x.x, 2) + math.pow(P.x-p.x.y, 2) + math.pow(P.z-p.x.z, 2));
                 //Debug.Log($"Distance is {distance}");
-                if (distance < 10.0) {
+                if (distance < 9.0f) {
                     p.mass = 0.0f;
                     p.v = 0.0f;
                     p.elastic_mu = 0.0f;

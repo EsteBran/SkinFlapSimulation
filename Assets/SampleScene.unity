@@ -363,11 +363,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f6a57a109fc6254abd8bef50f34bafb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3
+      value: -2.84
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f6a57a109fc6254abd8bef50f34bafb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.06
+      value: -1.97
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f6a57a109fc6254abd8bef50f34bafb, type: 3}
       propertyPath: m_LocalRotation.w
@@ -789,7 +789,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mesh: {fileID: -2432090755550338912, guid: 76b40491b14d8164d91556f39736db9c, type: 3}
-  resolution: 80
+  resolution: 123
   useUV: 0
 --- !u!114 &963194230
 MonoBehaviour:
