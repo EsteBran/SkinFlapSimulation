@@ -60,10 +60,10 @@
             v2f vert (appdata_full v, uint instanceID : SV_InstanceID) {
                 // take in data from the compute buffer, filled with data each frame in SimRenderer
                 // offsetting and scaling it from the (0...grid_res, 0...grid_res) resolution of our sim into a nicer range for rendering
-                float4 data = float4((particle_buffer[instanceID].x.xyz - float3(32, 32, 32)) * 0.1, 1.0);
+                float4 data = float4((particle_buffer[instanceID].x.xyz - float3(0, 0, 0)) * 0.1, 1.0);
                 
                 // Scaling vertices by our base size param (configurable in the material) and the mass of the particle
-                float3 localPosition = v.vertex.xyz * (0.02 * data.w);
+                float3 localPosition = v.vertex.xyz * (0.005 * data.w);
                 float3 worldPosition = data.xyz + localPosition;
 				
 
