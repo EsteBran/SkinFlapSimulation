@@ -45,7 +45,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     // simulation parameters
     const float dt = 0.15f; // timestep
     const float iterations = (int)(1.0f / dt);
-    const float gravity = -0.05f;
+    const float gravity = -0.5f;
 
     // Lamé parameters for stress-strain relationship
     const float lambda = 10.0f;
