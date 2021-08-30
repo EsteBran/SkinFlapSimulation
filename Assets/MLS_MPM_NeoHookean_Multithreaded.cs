@@ -34,7 +34,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     }
     
 
-    const int grid_res = 32;
+    const int grid_res = 16;
 
     //number of grid cells
     const int num_cells = grid_res * grid_res * grid_res;
@@ -144,17 +144,19 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
     void Start () {
         
-        laserPtr = GameObject.Find("kyle_saber_lp").transform;
+        laserPtr = GameObject.Find("LaserPtr").transform;
         
-        lineRenderer = GameObject.Find("kyle_saber_lp").AddComponent<LineRenderer>();
+        lineRenderer = GameObject.Find("LaserPtr").AddComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.widthMultiplier = 0.2f;
+        lineRenderer.startColor = new Color(255, 0, 0);
+        lineRenderer.endColor = lineRenderer.startColor; 
+        lineRenderer.widthMultiplier = 0.1f;
         
 
         laser = new float3(laserPtr.position.x, laserPtr.position.y, laserPtr.position.z);
-        laserDir = new float3(laserPtr.right.x,laserPtr.right.y,laserPtr.right.z);
-        Debug.Log(laser);
-        Debug.Log(laserDir);
+        laserDir = new float3(laserPtr.up.x,laserPtr.up.y,laserPtr.up.z);
+        // Debug.Log(laser);
+        // Debug.Log(laserDir);
         
         // populate our array of particles
 
@@ -163,11 +165,12 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         //spawn_box(grid_res/2, grid_res/2 , grid_res/2, 15, 15, 15);
         //var c  = CPUVoxelizer.Voxelize();
         
-        //spawn_box(grid_res/2, grid_res/2 , grid_res/2, grid_res/2, grid_res/2, grid_res/2);
+        spawn_box(grid_res/2, grid_res/2 , grid_res/2, grid_res/2, grid_res/2, grid_res/2);
 
-        float unit;
-        VoxelSystem.CPUVoxelizer.Voxelize(mesh, resolution, out voxels, out unit);
-        meshNormalized(voxels);
+        //Comment out next 3 lines to get rid of custom mesh
+        // float unit;
+        // VoxelSystem.CPUVoxelizer.Voxelize(mesh, resolution, out voxels, out unit);
+        // meshNormalized(voxels);
         // for (int i = 0; i < voxels.Count; i++) {
         //     var voxel = voxels[i];
         //     voxel.position = voxel.position*0.0045f + new Vector3(5f, 5f, 5f) ;
@@ -181,7 +184,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         
         num_particles = temp_positions.Count;
 
-        Debug.Log(num_particles + " " + num_cells);
+        //Debug.Log(num_particles + " " + num_cells);
 
         ps = new NativeArray<Particle>(num_particles, Allocator.Persistent);
         Fs = new NativeArray<float3x3>(num_particles, Allocator.Persistent);
@@ -281,12 +284,12 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         laser.y = laserPtr.position.y;
         laser.z = laserPtr.position.z;
 
-        laserDir.x = laserPtr.right.x;
-        laserDir.y = laserPtr.right.y;
-        laserDir.z = laserPtr.right.z;
+        laserDir.x = laserPtr.up.x;
+        laserDir.y = laserPtr.up.y;
+        laserDir.z = laserPtr.up.z;
 
         lineRenderer.SetPosition(0, laserPtr.position);
-        lineRenderer.SetPosition(1, laserPtr.position+laserPtr.right*5);
+        lineRenderer.SetPosition(1, laserPtr.position+laserPtr.up*5);
 
         HandleMouseInteraction();
 

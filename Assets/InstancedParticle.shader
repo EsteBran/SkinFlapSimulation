@@ -63,7 +63,7 @@
                 float4 data = float4((particle_buffer[instanceID].x.xyz - float3(0, 0, 0)) * 0.1, 1.0);
                 
                 // Scaling vertices by our base size param (configurable in the material) and the mass of the particle
-                float3 localPosition = v.vertex.xyz * (0.005 * data.w);
+                float3 localPosition = v.vertex.xyz * (0.02 * data.w);
                 float3 worldPosition = data.xyz + localPosition;
 				
 
@@ -84,7 +84,7 @@
                 //assign color based on lambda
                 if (particle_buffer[instanceID].elastic_lambda == 10.0f) {
                     
-                        o.color = _Liver * lightDot;
+                        o.color = _Skin * lightDot;
                     
                 } else if (particle_buffer[instanceID].elastic_lambda < 10.0f) {
                     
