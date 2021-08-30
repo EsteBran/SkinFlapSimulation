@@ -6,6 +6,7 @@
         _Size ("Size", float) = 0.035
         _Skin ("Skin", COLOR) = (0.76,0.55,0.57,1)
         _Liver ("Liver", COLOR) = (0.422, 0.17, 0.117, 1)
+        _Cut ("Cut", COLOR) = (0,0,0,0)
     }
 
     SubShader {
@@ -53,6 +54,7 @@
             float4 _Force;
             float4 _Skin;
             float4 _Liver;
+            float4 _Cut;
 
 
             StructuredBuffer<Particle> particle_buffer;
@@ -91,7 +93,9 @@
                    
                         o.color = _Test2 * lightDot;
                     
-                } 
+                } else {
+                    o.color = _Cut;
+                }
                 
                 return o;
             }
