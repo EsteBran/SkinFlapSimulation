@@ -1,7 +1,9 @@
 # SkinFlapSimulation
 
 ## Usage & Installation
+This simulation runs on Unity 2020.3.14f1. It probably works on older versions and newer versions, but we can't guarantee that it'll work.
 
+In order to run the sumulation on your machine, run '''git clone https://github.com/EsteBran/SkinFlapSimulation.git'''
 ## To Do
 
 - [ ] Refactor program into a more modular version in order to be able to add more features
