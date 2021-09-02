@@ -30,6 +30,7 @@ To run the simulation, click on the play button at the top of the scene window.
 
 ### Controls
 Q: Toggles camera control on and off
+
 When camera is enabled: Mouse to look, WASD to move, SPACE to move vertically up, LShift to move vertically down.
 
 Since automatic laser movement is not yet implemented, move the laser by maniupalting the position values in the inspector window.
