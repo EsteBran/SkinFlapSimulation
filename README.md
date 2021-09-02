@@ -11,7 +11,7 @@ Clone the repository to your local machine
 ```
 git clone https://github.com/EsteBran/SkinFlapSimulation.git
 ```
-Move into the simulaion directory and checkout the 3D branch
+Move into the simulation directory and checkout the 3D branch
 
 ```
 cd SkinFlapSimulation
