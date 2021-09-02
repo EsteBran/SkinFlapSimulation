@@ -1,5 +1,9 @@
 # SkinFlapSimulation
 
+## Usage & Installation
+
+## To Do
+
 - [ ] Refactor program into a more modular version in order to be able to add more features
 - - [x] Make it use 3D coordinates instead of 2D
 - [ ] Interacting between mesh and particles
@@ -7,7 +11,7 @@
 - [ ] Maybe using unity particle system
 - [x] Move simulation into 3D (might have to start with 3D depending on what we want to do)
 - [ ] Use shaders to parallelize simulation
-- [ ] Cut with laser and then maybe knife
+- [x] Cut with laser and then maybe knife
 - [ ] Figure out global position of particle
 - [x] Cut objects into smaller objects and have them interact with one another real time 
 - [ ] Mouse interaction
