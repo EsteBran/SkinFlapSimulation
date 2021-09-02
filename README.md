@@ -32,9 +32,9 @@ To run the simulation, click on the play button at the top of the scene window.
 ![image](https://user-images.githubusercontent.com/15898988/131772453-c29725d0-8f31-4067-a893-d2058504ebde.png)
 
 ### Controls
-Q: Toggles camera control on and off
+**Q** : Toggles camera control on and off
 
-When camera is enabled: Mouse to look, WASD to move, SPACE to move vertically up, LShift to move vertically down.
+When camera is enabled: **Mouse** to look, **W**, **A**, **S**, **D** to move forward, left, right, and back respectively, **SPACE** to move vertically up, **LShift** to move vertically down.
 
 Since automatic laser movement is not yet implemented, move the laser by maniupalting the position values in the inspector window.
 ![laserCut](https://user-images.githubusercontent.com/15898988/131772926-dbe607ff-c949-45a7-a9e7-45c9430b53aa.gif)
