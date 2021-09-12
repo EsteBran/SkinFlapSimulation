@@ -626,7 +626,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 distance /= div;
 
 
-                if (distance < 0.1f) {
+                if (distance < 0.05f) {
                     p.mass = 0.0f;
                     p.v = 0.0f;
                     p.elastic_mu = 0.0f;
