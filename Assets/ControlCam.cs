@@ -16,6 +16,8 @@ public class ControlCam : MonoBehaviour
     void Start()
     {
         Vector3 position = this.transform.position;
+        Vector3 initRotation = this.transform.localEulerAngles;
+        rotationX = initRotation[0];
     }
 
     // Update is called once per frame

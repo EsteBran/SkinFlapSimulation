@@ -490,6 +490,7 @@ GameObject:
   - component: {fileID: 545468998}
   - component: {fileID: 545468997}
   - component: {fileID: 545468996}
+  - component: {fileID: 545468995}
   m_Layer: 0
   m_Name: LaserPtr
   m_TagString: Untagged
@@ -497,6 +498,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &545468995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545468994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5683303f50b75a84a88c681c737f2097, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trans: {fileID: 545468998}
+  t: 0
+  speed: 0.01
 --- !u!23 &545468996
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -880,7 +896,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-21612
+  m_Name: pb_Mesh17544
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
