@@ -18,6 +18,16 @@ public class FollowPath : MonoBehaviour
     LineRenderer curve;
 
     float val = Mathf.PI/2;
+
+    Vector3 nBezierPath(List<Vector3> points, float t) {
+        
+        if (points.Count == 2) return Vector3.Lerp(points[0], points[1], t);
+        List<Vector3> first = new List<Vector3>();
+        for (int p = 0; p < points.Count-1; p++) {
+            first.Add(Vector3.Lerp(points[p], points[p+1], t));
+        }
+        return nBezierPath(first, t);
+    }
     //For cubic beziers only, will generalzie to n control point beziers later
     Vector3 bezierPath(List<Vector3> points, float t) {
         Vector3 result = new Vector3(0f,0f,0f);
@@ -95,7 +105,7 @@ public class FollowPath : MonoBehaviour
         float t = 0;
         
         while(t <= 1.0) {
-            pointsToDraw.Add(bezierPath(bezierPoints, t));
+            pointsToDraw.Add(nBezierPath(bezierPoints, t));
             t += inc;
             
         }
@@ -120,14 +130,19 @@ public class FollowPath : MonoBehaviour
         position = trans.position;
         trans.position = GameObject.Find("P1").transform.position;
         t = 0f;
-        bezierPoints = new List<Vector3>{GameObject.Find("P1").transform.position, GameObject.Find("P2").transform.position, GameObject.Find("P3").transform.position, GameObject.Find("P4").transform.position};
+        bezierPoints = new List<Vector3>{GameObject.Find("P1").transform.position, 
+        GameObject.Find("P2").transform.position, 
+        GameObject.Find("P3").transform.position,
+         GameObject.Find("P4").transform.position,
+         GameObject.Find("P5").transform.position,
+         GameObject.Find("P6").transform.position};
         if (drawLine) drawCurve(res);
     }
 
     // Update is called once per frame
     void Update()
     {
-        trans.position = bezierPath(bezierPoints, t);
+        trans.position = nBezierPath(bezierPoints, t);
         val+=speed*Time.deltaTime;
         t = 0.5f*(Mathf.Sin(val)+1.0f);
         t = Mathf.Clamp(t, 0f, 1f);
