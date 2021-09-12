@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class FollowPath : MonoBehaviour
 {
@@ -18,6 +19,34 @@ public class FollowPath : MonoBehaviour
     LineRenderer curve;
 
     float val = Mathf.PI/2;
+
+    public GameObject spherePoint;
+
+    List<Vector3> readPoints(string filePath) {
+        char[] delimiterChars = { ' ', ',', ':', '(', ')' };
+        List<Vector3> points = new List<Vector3>();
+        StreamReader sr = new StreamReader(filePath);
+        string line = "";
+        while ((line = sr.ReadLine()) != null) {
+            
+            string[] words = line.Split(delimiterChars);
+            List<float> dims = new List<float>();
+            foreach (var word in words)
+            {
+                
+                if (word.Length != 0) dims.Add(float.Parse(word));
+                //points.Add(new Vector3(float.Parse(words[0]), float.Parse(words[1]), float.Parse(words[2])));
+            }
+            for (int i = 0; i < dims.Count; i+=3) {
+                points.Add(new Vector3(dims[i], dims[i+1], dims[i+2]));
+            }
+            
+            //points.Add(new Vector3(float.Parse(words[0]), float.Parse(words[1]), float.Parse(words[2])));
+        }
+        
+        return points;
+    }
+
 
     Vector3 nBezierPath(List<Vector3> points, float t) {
         
@@ -109,8 +138,12 @@ public class FollowPath : MonoBehaviour
             t += inc;
             
         }
+
+        for (int p = 0; p < bezierPoints.Count; p++) {
+            Instantiate(spherePoint, bezierPoints[p], Quaternion.identity);
+        }
         
-        Debug.Log("about to draw");
+        
         //List<Vector3> pointsToDraw = split(points, res);
         curve.positionCount = pointsToDraw.Count;
         curve.material = new Material(Shader.Find("Sprites/Default"));
@@ -126,16 +159,20 @@ public class FollowPath : MonoBehaviour
 
     void Start()
     {   
+        readPoints("Assets/controlPoints.txt");
         curve = GameObject.Find("Line").AddComponent<LineRenderer>();
         position = trans.position;
-        trans.position = GameObject.Find("P1").transform.position;
+        
         t = 0f;
-        bezierPoints = new List<Vector3>{GameObject.Find("P1").transform.position, 
-        GameObject.Find("P2").transform.position, 
-        GameObject.Find("P3").transform.position,
-         GameObject.Find("P4").transform.position,
-         GameObject.Find("P5").transform.position,
-         GameObject.Find("P6").transform.position};
+        // bezierPoints = new List<Vector3>{GameObject.Find("P1").transform.position, 
+        // GameObject.Find("P2").transform.position, 
+        // GameObject.Find("P3").transform.position,
+        //  GameObject.Find("P4").transform.position,
+        //  GameObject.Find("P5").transform.position,
+        //  GameObject.Find("P6").transform.position};
+
+        bezierPoints = readPoints("Assets/controlPoints.txt");
+        trans.position = bezierPoints[0];
         if (drawLine) drawCurve(res);
     }
 

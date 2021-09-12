@@ -80,6 +80,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
     float3 laser;
     float3 laserDir;
 
+    public float laserWidth = 0.05f;
+
     LineRenderer lineRenderer;
 
 
@@ -150,7 +152,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
         lineRenderer.startColor = new Color(255, 0, 0);
         lineRenderer.endColor = lineRenderer.startColor; 
-        lineRenderer.widthMultiplier = 0.1f;
+        lineRenderer.widthMultiplier = laserWidth;
         
 
         laser = new float3(laserPtr.position.x, laserPtr.position.y, laserPtr.position.z);
@@ -283,7 +285,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
         laser.x = laserPtr.position.x;
         laser.y = laserPtr.position.y;
         laser.z = laserPtr.position.z;
-
+        lineRenderer.widthMultiplier = laserWidth;
         laserDir.x = laserPtr.up.x;
         laserDir.y = laserPtr.up.y;
         laserDir.z = laserPtr.up.z;
@@ -512,6 +514,8 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
 
         [ReadOnly] public float3 laser;
         [ReadOnly] public float3 laserDir;
+
+        public float3 laserWidth;
         
         public void Execute(int i) {
             Particle p = ps[i];
@@ -626,7 +630,7 @@ public class MLS_MPM_NeoHookean_Multithreaded : MonoBehaviour {
                 distance /= div;
 
 
-                if (distance < 0.05f) {
+                if (distance < 0.05) {
                     p.mass = 0.0f;
                     p.v = 0.0f;
                     p.elastic_mu = 0.0f;

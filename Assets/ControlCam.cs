@@ -9,7 +9,6 @@ public class ControlCam : MonoBehaviour
    
     public float rotationSpeed = 100.0f;
     float rotationX = 0;
-    float rotationY = 0;
     public float speed = 5f;
     public Transform parent;
     // Start is called before the first frame update
