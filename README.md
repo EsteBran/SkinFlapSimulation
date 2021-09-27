@@ -6,11 +6,13 @@ This is a Unity based MPM simulation. MPM stands for Material Point Method, whic
 
 So far this program can simulate up to 100,000 particles at around 40fps by taking advantage of the Unity Job System (for multithreading) and Burst Compiler (for efficient compiling). There is a laser that can cut into the material, and you can make the laser follow a bezier curve by editing the bezier curve handles. Here are a few gifs showing operation.
 
-![image](https://user-images.githubusercontent.com/32085355/134945284-0771da93-aa70-4c7a-97b5-9ae2afe78d63.png)
+
+![Picture2](https://user-images.githubusercontent.com/32085355/134945864-35952f81-b301-4cc2-9dfe-f80ef3be2955.gif)
+
+![Picture3](https://github.com/EsteBran/SkinFlapSimulation/blob/main/Assets/Picture3.gif)
 
 
-![image](https://user-images.githubusercontent.com/32085355/134945163-d2789e6c-62b2-4fee-9aa8-62b3653b1c44.png)
-
+The main branch has not been updated for a while, since it started off as a 2D MPM simulation. For latest updates, please look into the 3D branch.
 
 
 
