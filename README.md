@@ -2,6 +2,17 @@
 
 
 # SkinFlapSimulation
+This is a Unity based MPM simulation. MPM stands for Material Point Method, which is an algorithm that can simulate continuum materials like solids and liquids. In this case, it is used to simulate skin deformation and cutting, for applications in skin surgery. For more information on MPM, check [Wikipedia](https://www.wikiwand.com/en/Material_point_method). 
+
+So far this program can simulate up to 100,000 particles at around 40fps by taking advantage of the Unity Job System (for multithreading) and Burst Compiler (for efficient compiling). There is a laser that can cut into the material, and you can make the laser follow a bezier curve by editing the bezier curve handles. Here are a few gifs showing operation.
+
+![image](https://user-images.githubusercontent.com/32085355/134945284-0771da93-aa70-4c7a-97b5-9ae2afe78d63.png)
+
+
+![image](https://user-images.githubusercontent.com/32085355/134945163-d2789e6c-62b2-4fee-9aa8-62b3653b1c44.png)
+
+
+
 
 ## Usage & Installation
 This simulation runs on Unity 2020.3.14f1. It probably works on older versions and newer versions, but we can't guarantee that it'll work.
